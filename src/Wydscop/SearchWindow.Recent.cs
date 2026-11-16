@@ -33,7 +33,9 @@ public partial class SearchWindow
 
         if (recent.Count > 0)
         {
-            _ordered.Add(SearchResult.Heading("Recent"));
+            var heading = SearchResult.Heading("Recent");
+            heading.HeaderAction = ClearAllText;
+            _ordered.Add(heading);
             headings++;
             if (_recentExpanded || recent.Count <= RecentShownAtFirst)
             {
@@ -171,6 +173,15 @@ public partial class SearchWindow
     private void RemoveSelectedRecent()
     {
         if (ResultsList.SelectedItem is SearchResult result) RemoveRecent(result, keepHighlight: true);
+    }
+
+    private const string ClearAllText = "Clear all";
+
+    /// <summary>"Clear all" on the Recent heading: empties the Recent list in one click. Pins stay.</summary>
+    private void ClearAllRecentClicked()
+    {
+        Log.Write("Cleared all recent items from the bar");
+        ClearRecent();
     }
 
     public void ClearRecent()

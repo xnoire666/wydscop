@@ -66,6 +66,7 @@ public partial class SearchWindow
 
         _results.Clear();
         for (int i = 0; i < show; i++) _results.Add(_ordered[i]);
+        SyncMarks();
 
         bool any = _results.Count > 0;
         EmptyMessage.Text = emptyMessage ?? string.Empty;
@@ -115,6 +116,7 @@ public partial class SearchWindow
         {
             int end = Math.Min(_ordered.Count, _results.Count + PageSize);
             for (int i = _results.Count; i < end; i++) _results.Add(_ordered[i]);
+            SyncMarks();
             return;
         }
 
@@ -163,31 +165,82 @@ public partial class SearchWindow
         ResultsList.ScrollIntoView(ResultsList.SelectedItem);
     }
 
+    /// <summary>
+    /// Opens the highlighted result, or, when some are marked with Ctrl+click, all the marked ones.
+    /// </summary>
     /// <param name="reveal">Ctrl+Enter: show the file or folder in File Explorer instead of opening it.</param>
     private void OpenSelected(bool reveal = false)
     {
-        if (ResultsList.SelectedItem is not SearchResult result || result.IsHeader) return;
-
-        // Action rows ("Show more") run in place: the bar stays open and nothing is recorded.
-        if (result.IsCommand)
+        if (ResultsList.SelectedItem is SearchResult { IsCommand: true } command)
         {
-            result.Execute();
+            // Action rows ("Show more") run in place: the bar stays open and nothing is recorded.
+            command.Execute();
             return;
         }
 
-        Action action = reveal && result.Reveal is not null ? result.Reveal : result.Execute;
+        if (_marked.Count > 0)
+        {
+            OpenResults(_marked.ToList(), reveal);
+            return;
+        }
+
+        if (ResultsList.SelectedItem is not SearchResult result || result.IsHeader) return;
+        OpenResults([result], reveal);
+    }
+
+    private void OpenResults(IReadOnlyList<SearchResult> results, bool reveal)
+    {
         if (!IsPinned) HideBar();
-        _usage.Record(result.Id);
-        _recent.Add(result);
-        try
+        ClearMarks();
+
+        // Opened in the order you marked them; the last one ends up on top of Recent.
+        foreach (var result in results)
         {
-            action();
-            Log.Write($"{(action == result.Execute ? "Opened" : "Revealed")} {result.Title} ({result.Id})");
+            Action action = reveal && result.Reveal is not null ? result.Reveal : result.Execute;
+            _usage.Record(result.Id);
+            _recent.Add(result);
+            try
+            {
+                action();
+                Log.Write($"{(action == result.Execute ? "Opened" : "Revealed")} {result.Title} ({result.Id})");
+            }
+            catch (Exception ex)
+            {
+                Log.Write($"Could not open {result.Title}: {ex.Message}");
+            }
         }
-        catch (Exception ex)
-        {
-            Log.Write($"Could not open {result.Title}: {ex.Message}");
-        }
+    }
+
+    // ---------- Marking several results (Ctrl+click / Ctrl+Space), opened together with Enter ----------
+
+    /// <summary>Marked results in the order you marked them. Kept while you type, so you can mark from several searches.</summary>
+    private readonly List<SearchResult> _marked = new();
+
+    /// <summary>Ctrl+click or Ctrl+Space: mark the row, or unmark it. Apps, files and folders only.</summary>
+    private void ToggleMark(SearchResult result)
+    {
+        if (!result.CanPin) return; // headings, "Show more"
+        int index = _marked.FindIndex(m => string.Equals(m.Id, result.Id, StringComparison.OrdinalIgnoreCase));
+        if (index >= 0) _marked.RemoveAt(index);
+        else _marked.Add(result);
+        SyncMarks();
+    }
+
+    private void ClearMarks()
+    {
+        if (_marked.Count == 0) return;
+        foreach (var m in _marked) m.IsMarked = false;
+        _marked.Clear();
+        SyncMarks();
+    }
+
+    /// <summary>
+    /// Rows are rebuilt for every search (a file found again is a new object), so marks are matched by id.
+    /// </summary>
+    private void SyncMarks()
+    {
+        foreach (var r in _results)
+            r.IsMarked = _marked.Count > 0 && _marked.Exists(m => string.Equals(m.Id, r.Id, StringComparison.OrdinalIgnoreCase));
     }
 
     // ---------- Mouse ----------
@@ -208,11 +261,36 @@ public partial class SearchWindow
         }
     }
 
+    /// <summary>A heading with "Clear all" takes clicks, but the press must not highlight the heading itself.</summary>
+    private void ResultsList_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (ItemFromEvent(e) is SearchResult { IsHeader: true }) e.Handled = true;
+    }
+
     private void ResultsList_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
-        if (ItemFromEvent(e) is not SearchResult { IsHeader: false } item) return; // e.g. the scrollbar, a heading
+        // "Clear all" on the Recent heading.
+        if (ItemFromEvent(e) is SearchResult { IsHeader: true })
+        {
+            e.Handled = true;
+            if (HasTag(e.OriginalSource, "HeaderAction")) ClearAllRecentClicked();
+            SearchBox.Focus();
+            return;
+        }
+
+        if (ItemFromEvent(e) is not SearchResult { IsHeader: false } item) return; // e.g. the scrollbar
         ResultsList.SelectedItem = item;
         e.Handled = true;
+
+        // Ctrl+click marks the row (or unmarks it) instead of opening it; Enter then opens all marked rows.
+        if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control) && item.CanPin
+            && !HasTag(e.OriginalSource, "TogglePin") && !HasTag(e.OriginalSource, "RemoveRecent"))
+        {
+            ToggleMark(item);
+            _userMovedSelection = true;
+            SearchBox.Focus();
+            return;
+        }
 
         // The pin on a row pins or unpins it.
         if (HasTag(e.OriginalSource, "TogglePin"))
@@ -237,6 +315,9 @@ public partial class SearchWindow
             SearchBox.Focus();
             return;
         }
+
+        // A plain click on a marked row opens all marked rows; on any other row it opens just that one.
+        if (_marked.Count > 0 && !item.IsMarked) ClearMarks();
         OpenSelected();
     }
 

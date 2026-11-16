@@ -117,6 +117,7 @@ public partial class SearchWindow : Window
         {
             _userMovedSelection = false;
             _recentExpanded = false; // back to the 10 newest
+            ClearMarks();
             RunSearch();
         }
 

@@ -12,9 +12,11 @@ public partial class SearchWindow
         switch (e.Key)
         {
             case Key.Escape:
+                // Rows marked with Ctrl+click: Esc unmarks them first.
                 // Inside a folder: back out to your search results first.
                 // Pinned: Esc clears the search instead of hiding (unpin, or Alt+Space, to hide).
-                if (InFolder)
+                if (_marked.Count > 0) ClearMarks();
+                else if (InFolder)
                 {
                     while (_folderStack.Count > 1)
                     {
@@ -31,6 +33,11 @@ public partial class SearchWindow
             case Key.Right when ResultsList.SelectedItem is SearchResult { IsFolder: true } folder
                                 && SearchBox.SelectionLength == 0 && SearchBox.CaretIndex == SearchBox.Text.Length:
                 EnterFolder(folder);
+                break;
+
+            // Ctrl+Space: mark or unmark the highlighted result (like Ctrl+click); Enter opens all marked.
+            case Key.Space when Keyboard.Modifiers == ModifierKeys.Control:
+                if (ResultsList.SelectedItem is SearchResult toMark) ToggleMark(toMark);
                 break;
 
             // Ctrl+P: pin or unpin the highlighted result.

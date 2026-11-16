@@ -62,11 +62,12 @@ dotnet publish src/Wydscop -c Release -r win-x64 --self-contained -p:PublishSing
 | **↑ / ↓**, **Page Up / Page Down** | Move through results |
 | **Enter** / click | Open the highlighted result |
 | **Ctrl+Enter** | Show the file or folder in File Explorer |
+| **Ctrl+click** / **Ctrl+Space** | Mark several results, then **Enter** opens them all |
 | **→** on a folder (or click its **›**) | Look inside the folder |
 | **←** (cursor at start) / **Backspace** (empty) | Go back one folder |
 | **Ctrl+P** (or the pin on a row) | Pin or unpin a result |
 | **Delete** (or **✕**) on a recent item | Remove it from Recent |
-| **Esc** | Leave folders, then close the bar |
+| **Esc** | Unmark marked results, leave folders, then close the bar |
 | Drag the bar's empty area | Move it (double-click to reset) |
 | Drag the bar's left/right edge | Change its width (double-click to reset) |
 | Pin button on the bar | Keep the bar open and in place |

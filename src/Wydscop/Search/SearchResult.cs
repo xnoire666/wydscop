@@ -65,8 +65,42 @@ public sealed class SearchResult : INotifyPropertyChanged
         }
     }
 
+    private bool _isMarked;
+
+    /// <summary>Ctrl+clicked: one of several items Enter opens together. Its row is tinted.</summary>
+    public bool IsMarked
+    {
+        get => _isMarked;
+        set
+        {
+            if (_isMarked == value) return;
+            _isMarked = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMarked)));
+        }
+    }
+
     public static SearchResult Heading(string title) =>
         new("wydscop:heading:" + title, ResultKind.Header, title, string.Empty, () => { });
+
+    private string? _headerAction;
+
+    /// <summary>
+    /// Clickable text on the right of a heading, like "Clear all" on Recent. Null for plain headings.
+    /// Changes text in place (e.g. to ask for a second click), so it notifies.
+    /// </summary>
+    public string? HeaderAction
+    {
+        get => _headerAction;
+        set
+        {
+            if (_headerAction == value) return;
+            _headerAction = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HeaderAction)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasHeaderAction)));
+        }
+    }
+
+    public bool HasHeaderAction => _headerAction is not null;
 
     /// <summary>
     /// A copy for the Recent list. App results are shared with normal search, so the ✕ flag must not be

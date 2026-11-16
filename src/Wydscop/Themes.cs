@@ -49,10 +49,14 @@ internal static class Themes
             ("Icon.Subtle", C(0xFF5C6370)),         // ›, ✕
             ("Icon.Hover", C(0xFF1B1E23)),
             ("Accent.Text", C(0xFF1A5FD0)),         // "Show more"
+            ("Danger.Text", C(0xFFC42B1C)),         // "Clear all" (deletes)
+            ("Danger.HoverBackground", C(0x1AC42B1C)),
             ("Folder.Icon", C(0xFFC28A1C)),
             ("Chip.Background", C(0x14202A3A)),
             ("Divider", C(0x1A202A3A)),
             ("Row.Selected", C(0x262F6FDF)),        // soft blue
+            ("Row.Marked", C(0x1F2F6FDF)),          // Ctrl+clicked rows, opened together with Enter
+            ("Row.MarkedSelected", C(0x402F6FDF)),
             ("Row.ButtonHover", C(0x1A202A3A)),
             ("Button.HoverBackground", C(0x12202A3A)),
             ("Scroll.Thumb", C(0x38202A3A)),
@@ -72,10 +76,14 @@ internal static class Themes
             ("Icon.Subtle", C(0xFFB5B1AA)),
             ("Icon.Hover", C(0xFFD6D2CB)),
             ("Accent.Text", C(0xFF9CC0FF)),
+            ("Danger.Text", C(0xFFFF8A80)),
+            ("Danger.HoverBackground", C(0x26FF6B5E)),
             ("Folder.Icon", C(0xFFE8C46A)),
             ("Chip.Background", C(0xFF45413D)),
             ("Divider", C(0xFF3D3A37)),
             ("Row.Selected", C(0xFF45413D)),
+            ("Row.Marked", C(0x2E6FA0FF)),
+            ("Row.MarkedSelected", C(0x476FA0FF)),
             ("Row.ButtonHover", C(0xFF55514D)),
             ("Button.HoverBackground", C(0xFF3A3734)),
             ("Scroll.Thumb", C(0xFF55514D)),
