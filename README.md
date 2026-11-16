@@ -95,7 +95,7 @@ at the top of a drive (`Windows`, `Program Files`, `ProgramData`…).
 |---|---|
 | `src/Wydscop/App.xaml.cs` | Startup: single instance, hotkey, tray, settings carry-over |
 | `src/Wydscop/SearchWindow.xaml` | The bar and results list (layout, row template, pin drawing) |
-| `src/Wydscop/SearchWindow.xaml.cs` | Search, ordering, folders, recent/pinned, keyboard, drag/resize, acrylic |
+| `src/Wydscop/SearchWindow.*.cs` | The bar window, split by area: `Search`, `Results`, `Recent`, `Folders`, `Keyboard`, `Placement` (drag/resize), `Theme` (acrylic), `Tagline` |
 | `src/Wydscop/Themes.cs` | Light and Dark color palettes |
 | `src/Wydscop/Search/AppIndex.cs` | Start menu apps (`shell:AppsFolder`), their icons and dates |
 | `src/Wydscop/Search/FileSearch.cs` | File and folder search through the Windows Search index (OLE DB) |

@@ -29,7 +29,16 @@ dotnet run --project src/Wydscop
 |---|---|
 | Startup: single instance, hotkey, tray, settings carry-over | `src/Wydscop/App.xaml.cs` |
 | The bar and results list (layout, row template, red pin drawing `RedPinImage`) | `src/Wydscop/SearchWindow.xaml` |
-| Search, ordering, folders, recent/pinned, keyboard, drag/resize, acrylic, themes | `src/Wydscop/SearchWindow.xaml.cs` |
+| The bar window (`partial class SearchWindow`), one file per area: | |
+| &nbsp;&nbsp;shared stores, constructor, show/hide/toggle, pin the bar, deactivate/close | `src/Wydscop/SearchWindow.xaml.cs` |
+| &nbsp;&nbsp;typing, app scoring, ordering (`SortByScore`), Windows Search + local index queries | `src/Wydscop/SearchWindow.Search.cs` |
+| &nbsp;&nbsp;the list: paging/lazy loading, highlight, opening, mouse clicks on rows | `src/Wydscop/SearchWindow.Results.cs` |
+| &nbsp;&nbsp;empty bar: Recent and Pinned sections, pinning results, "Show more", removing | `src/Wydscop/SearchWindow.Recent.cs` |
+| &nbsp;&nbsp;looking inside folders (→ / ←), folder chip, scroll restore | `src/Wydscop/SearchWindow.Folders.cs` |
+| &nbsp;&nbsp;keyboard shortcuts (`OnPreviewKeyDown`) | `src/Wydscop/SearchWindow.Keyboard.cs` |
+| &nbsp;&nbsp;position on the monitor, drag to move, resize the width, save position | `src/Wydscop/SearchWindow.Placement.cs` |
+| &nbsp;&nbsp;acrylic and Light/Dark/Match Windows theme | `src/Wydscop/SearchWindow.Theme.cs` |
+| &nbsp;&nbsp;rotating placeholder taglines | `src/Wydscop/SearchWindow.Tagline.cs` |
 | Light and Dark palettes | `src/Wydscop/Themes.cs` |
 | Start menu apps (`shell:AppsFolder`), icons, dates | `src/Wydscop/Search/AppIndex.cs` |
 | Windows Search index queries (OLE DB, `Search.CollatorDSO`) | `src/Wydscop/Search/FileSearch.cs` |
@@ -41,7 +50,7 @@ dotnet run --project src/Wydscop
 | Hotkey, tray, startup, settings, taglines, migration | `src/Wydscop/Services/*.cs` |
 | Win32 / DWM imports | `src/Wydscop/Interop/NativeMethods.cs` |
 
-**Result ordering** (`SortByScore` in `SearchWindow.xaml.cs`): by `Matcher` score (exact 1000, starts with 900,
+**Result ordering** (`SortByScore` in `SearchWindow.Search.cs`): by `Matcher` score (exact 1000, starts with 900,
 word start 800, initials 700, contains 500, letters in order ≤300, typos ≤150; name length does **not** count),
 then newest date (modified, else created), then shorter name. Apps and files are one list; there are no
 sections or "top hit" in search results (the user explicitly rejected those).
