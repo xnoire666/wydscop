@@ -2,7 +2,9 @@
 
 Guidance for AI coding agents (and humans) working on **Wydscop**, a Spotlight-style search bar for
 Windows: Alt+Space opens a frosted bar that finds apps, files and folders. C# / WPF on .NET 10,
-Windows only. See `README.md` for what the app does from a user's point of view.
+Windows only. See `README.md` for what the app does from a user's point of view, and
+`HANDOVER.md` for setting up a new machine and where the work stands (keep its "Where the work stands"
+section current when you finish a feature).
 
 ## Build and run
 
@@ -86,7 +88,9 @@ same list; keyboard and mouse skip headings.
   short inline comments for non-obvious behavior. Keep the user-facing wording friendly and short.
 - **Behavior choices the user made** (don't undo without asking): Alt+Space hotkey; bar top at 14% of the
   screen by default; nothing highlighted on the empty bar until ↓; ✕ on recent rows is on the **left**,
-  the row pin on the **right**; placeholder taglines rotate every 30 s; Light theme is the default.
+  the row pin on the **right**; placeholder taglines rotate every 30 s; Light theme is the default;
+  "Clear all" on Recent is red and clears in **one** click (no confirmation step);
+  Ctrl+click / Ctrl+Space mark several results and Enter opens all marked.
 - **Privacy:** never commit personal data (names, paths under a real user profile, screenshots of the user's
   screen). Examples in docs use generic paths like `C:\xampp`.
 
