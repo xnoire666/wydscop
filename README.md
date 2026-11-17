@@ -61,6 +61,8 @@ To make a standalone build you can copy to another PC:
 dotnet publish src/Wydscop -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o publish
 ```
 
+To build the Microsoft Store package (MSIX), see [packaging/README.md](packaging/README.md).
+
 ## Using it
 
 | Key / action | What it does |
@@ -90,7 +92,7 @@ Everything stays on your PC, under your Windows user:
 | What | Where |
 |---|---|
 | Settings (theme, position, width, pinned bar) | `HKCU\Software\Wydscop` |
-| Start with Windows | `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` → `Wydscop` |
+| Start with Windows | `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` → `Wydscop` (Store version: Settings → Apps → Startup) |
 | Recent items, pinned results, open counts | `%LocalAppData%\Wydscop\recent.json`, `pinned.json`, `usage.json` |
 | Log | `%LocalAppData%\Wydscop\wydscop.log` |
 
@@ -119,10 +121,11 @@ at the top of a drive (`Windows`, `Program Files`, `ProgramData`…).
 | `src/Wydscop/Services/BarPositionStore.cs`, `ThemeSettings.cs`, `StartupManager.cs` | Saved position/size, theme, start with Windows |
 | `src/Wydscop/Services/LegacyMigration.cs` | One-time carry-over of settings from the old name (EasyFind) |
 | `src/Wydscop/Interop/NativeMethods.cs` | Win32 and DWM imports |
+| `packaging/` | Microsoft Store (MSIX) manifest, tile images, build script and submission guide |
+| `tools/make-icon.py` | Draws the logo, the app/tray icon and the Store images |
 
 ## Roadmap
 
-- Custom app and tray icon (both use the generic Windows app icon for now)
 - Configurable hotkey
 - Calculator and web search results
 

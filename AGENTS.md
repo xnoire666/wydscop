@@ -16,10 +16,13 @@ dotnet build Wydscop.slnx
 dotnet run --project src/Wydscop
 ```
 
-- **Stop the running app before building.** It runs from `src/Wydscop/bin/Debug/net10.0-windows/Wydscop.exe`
+- **Stop the running app before building.** It runs from `src/Wydscop/bin/Debug/net10.0-windows10.0.19041.0/Wydscop.exe`
   and locks it, so the build fails with "file is being used". Use `Stop-Process -Name Wydscop`, then start
   it again after building so the user keeps a running copy.
 - Only one instance runs at a time (mutex `Local\Wydscop.SingleInstance`); a second launch exits immediately.
+- **Microsoft Store package (MSIX):** `.\packaging\build-msix.ps1` (see `packaging/README.md`); add
+  `-Register` to install it for your user and try it (needs Developer Mode). Bump `<Version>` in the csproj
+  for each Store upload.
 - Release / CI build: `dotnet build Wydscop.slnx -c Release`. CI (`.github/workflows/build.yml`) also
   publishes a self-contained, compressed single-file `Wydscop.exe` as an artifact.
 - There are **no automated tests**. Verify changes by building, running the app, and reading the log at
@@ -51,6 +54,7 @@ dotnet run --project src/Wydscop
 | Shell icons with alpha, background loading | `src/Wydscop/Search/ShellIcons.cs`, `IconLoader.cs` |
 | Hotkey, tray, startup, settings, taglines, migration | `src/Wydscop/Services/*.cs` |
 | Logo and app/tray icon (generated; edit the script, not the images) | `tools/make-icon.py` → `src/Wydscop/Assets/Wydscop.ico`, `assets/logo.*` |
+| MSIX: manifest, Store images, build script, submission guide | `packaging/` (`Package.appxmanifest`, `build-msix.ps1`, `README.md`) |
 | Win32 / DWM imports | `src/Wydscop/Interop/NativeMethods.cs` |
 
 **Result ordering** (`SortByScore` in `SearchWindow.Search.cs`): by `Matcher` score (exact 1000, starts with 900,
@@ -64,8 +68,12 @@ same list; keyboard and mouse skip headings.
 ## Where state lives
 
 - Settings: registry `HKCU\Software\Wydscop` (theme, bar position/width, pinned bar, first-run flag).
-- Start with Windows: `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` → value `Wydscop`.
-- Data: `%LocalAppData%\Wydscop\` → `recent.json`, `pinned.json`, `usage.json`, `wydscop.log`.
+- Start with Windows: `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` → value `Wydscop`; when installed as
+  MSIX, the package's startup task `WydscopStartup` instead (`StartupManager.IsPackaged` decides).
+- Data: `%LocalAppData%\Wydscop\` → `recent.json`, `pinned.json`, `usage.json`, `wydscop.log`. Windows may redirect
+  new files of a packaged (MSIX) process, including one started from a packaged terminal such as the Claude
+  desktop app's, to `%LocalAppData%\Packages\<family name>\LocalCache\Local\Wydscop\`. If the log looks stale,
+  look there.
 - The app used to be called **EasyFind**. `Services/LegacyMigration.cs` copies old settings once; keep it, but
   don't reintroduce the old name anywhere else.
 
@@ -82,6 +90,9 @@ same list; keyboard and mouse skip headings.
 - **Shell COM needs STA threads** (app enumeration, icons). Background work must never touch UI elements
   directly; use `Dispatcher.InvokeAsync`. `SearchResult` raises `PropertyChanged` for late-arriving icons/dates.
 - **Windows Search dates are UTC.** Read them with `DateTime.SpecifyKind(..., Utc)`.
+- **Target framework is `net10.0-windows10.0.19041.0`** (for WinRT's `StartupTask` in the MSIX build), still
+  supporting Windows 10 1809 (`SupportedOSPlatformVersion`). Keep the startup task id in `StartupManager` and
+  `packaging/Package.appxmanifest` the same.
 - **Name clashes in .NET 10 WPF:** don't name types `ThemeMode` (WPF has one; ours is `BarTheme`).
   `System.Windows.Forms` and `System.Drawing` implicit usings are removed in the csproj; qualify them.
   WPF projects don't get `System.IO` implicitly; add `using System.IO;`.

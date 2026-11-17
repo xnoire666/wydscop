@@ -2,7 +2,10 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <!-- The Windows 10 SDK version gives access to WinRT APIs (StartupTask, used when installed as MSIX).
+         It still runs on Windows 10 1809 and later. -->
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
@@ -13,6 +16,8 @@
     <NoWarn>$(NoWarn);WFO0003</NoWarn>
     <AssemblyTitle>Wydscop</AssemblyTitle>
     <Product>Wydscop</Product>
+    <!-- The MSIX package version is this plus ".0" (the Store needs the last part to be 0). -->
+    <Version>1.0.0</Version>
     <!-- Exe icon (Explorer, Start with Windows, Task Manager). Regenerate with tools/make-icon.py. -->
     <ApplicationIcon>Assets\Wydscop.ico</ApplicationIcon>
   </PropertyGroup>

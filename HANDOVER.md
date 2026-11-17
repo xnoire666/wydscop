@@ -72,7 +72,7 @@ dotnet run --project src/Wydscop
 ```
 
 - The first launch turns on **Start with Windows** and puts an icon in the tray. Press **Alt+Space**.
-- **Stop the app before rebuilding.** It locks `src/Wydscop/bin/Debug/net10.0-windows/Wydscop.exe`
+- **Stop the app before rebuilding.** It locks `src/Wydscop/bin/Debug/net10.0-windows10.0.19041.0/Wydscop.exe`
   (exit from the tray, or `Stop-Process -Name Wydscop` in PowerShell), then start it again.
 - Only one copy runs at a time; a second launch quietly exits.
 - If Alt+Space does nothing, another app may own the shortcut (for example PowerToys Run). The log says
@@ -122,15 +122,22 @@ Last updated: 17 Nov 2026. Branch `main`, everything pushed.
 - **Logo and tray icon:** a "WS" monogram in glowing aurora colors on a dark tile (`assets/logo.svg`,
   `assets/logo.png`). `src/Wydscop/Assets/Wydscop.ico` is the exe and tray icon; all of them are drawn by
   `tools/make-icon.py` (needs Pillow), so change the design there and rerun it.
+- The bar's search icon uses the logo's aurora gradient; **Dark** is now the default theme.
+- **Microsoft Store package:** `packaging/` has the MSIX manifest, Store tiles (from `tools/make-icon.py`), a
+  build script and a step-by-step submission guide (`packaging/README.md`); `PRIVACY.md` is the privacy
+  policy. Start with Windows uses a package startup task when installed as MSIX. Tested by installing the
+  unpacked package with `-Register`: the bar, hotkey and startup task worked.
 
 ### Worth checking
+
+- **Store submission not done yet:** reserve the name in Partner Center, build with the real identity values,
+  host `PRIVACY.md` at a public URL, take screenshots, upload (steps in `packaging/README.md`).
 
 - The last two features built cleanly and the app ran, but they were only lightly tried. Check "Clear all"
   and marked rows in **both** themes, and try Ctrl+click on recent and pinned rows.
 
 ### Ideas not started (from the README roadmap)
 
-- Custom app and tray icon (both use the generic Windows app icon for now).
 - Configurable hotkey.
 - Calculator and web search results.
 

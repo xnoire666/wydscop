@@ -109,4 +109,19 @@ internal static class NativeMethods
 
     [DllImport("user32.dll", SetLastError = true)]
     public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+    private static extern int GetCurrentPackageFullName(ref uint packageFullNameLength, IntPtr packageFullName);
+
+    private const int APPMODEL_ERROR_NO_PACKAGE = 15700;
+
+    /// <summary>
+    /// True when the process runs with package identity (installed from an MSIX). Asking for the
+    /// name with a zero-length buffer is enough: an unpackaged process gets "no package".
+    /// </summary>
+    public static bool IsPackaged()
+    {
+        uint length = 0;
+        return GetCurrentPackageFullName(ref length, IntPtr.Zero) != APPMODEL_ERROR_NO_PACKAGE;
+    }
 }

@@ -5,6 +5,7 @@ Needs Pillow (pip install pillow). Writes:
   src/Wydscop/Assets/Wydscop.ico   app + tray icon (16..256 px)
   assets/logo.png                  512 px logo for the README
   assets/logo.svg                  the same drawing as a vector
+  packaging/Images/*.png           Microsoft Store (MSIX) tiles and icons, at every scale
 
 The logo is a "WS" monogram in glowing aurora colors (sky blue, indigo, fuchsia, coral) on a
 dark tile, with a small sparkle. The letters are drawn as thick rounded strokes, not set in a
@@ -89,10 +90,13 @@ def sparkle(img, n, sx, sy, sr):
     img.paste((255, 255, 255, 255), (0, 0), m)
 
 
-def draw(size):
+def draw(size, rounded=True, background=True):
+    """The logo at `size` px. rounded=False fills the whole square (Store tiles get their own
+    shape from Windows); background=False draws only the letters, glow and sparkle."""
     n = SS
     small = size <= 24
-    out = vertical(n, TILE_TOP, TILE_BOTTOM).convert("RGBA")
+    out = (vertical(n, TILE_TOP, TILE_BOTTOM).convert("RGBA") if background
+           else Image.new("RGBA", (n, n), (0, 0, 0, 0)))
     mask = letters(n, small)
     colors = linear(n, AURORA_BRIGHT if size <= 32 else AURORA).convert("RGBA")
     if not small:
@@ -102,12 +106,46 @@ def draw(size):
     out.paste(colors, (0, 0), mask)
     if not small:
         sparkle(out, n, n * 0.835, n * 0.20, n * 0.055)
-    pad = 0 if small else n * 0.04
-    tile = Image.new("L", (n, n), 0)
-    ImageDraw.Draw(tile).rounded_rectangle([pad, pad, n - 1 - pad, n - 1 - pad], n * 0.23, fill=255)
-    final = Image.new("RGBA", (n, n), (0, 0, 0, 0))
-    final.paste(out, (0, 0), tile)
-    return final.resize((size, size), Image.LANCZOS)
+    if rounded:
+        pad = 0 if small else n * 0.04
+        tile = Image.new("L", (n, n), 0)
+        ImageDraw.Draw(tile).rounded_rectangle([pad, pad, n - 1 - pad, n - 1 - pad], n * 0.23, fill=255)
+        final = Image.new("RGBA", (n, n), (0, 0, 0, 0))
+        final.paste(out, (0, 0), tile)
+        out = final
+    return out.resize((size, size), Image.LANCZOS)
+
+
+def tile(w, h, logo=0.62):
+    """A Start menu tile: the dark background edge to edge, the logo `logo` x the height, centered."""
+    out = vertical(max(w, h), TILE_TOP, TILE_BOTTOM).resize((w, h)).convert("RGBA")
+    s = round(h * logo)
+    art = draw(s, rounded=False, background=False)
+    out.alpha_composite(art, ((w - s) // 2, (h - s) // 2))
+    return out
+
+
+def store_images(folder):
+    """MSIX images. makepri picks the right file from the .scale-N / .targetsize-N names."""
+    os.makedirs(folder, exist_ok=True)
+    for f in os.listdir(folder):
+        if f.endswith(".png"):
+            os.remove(os.path.join(folder, f))
+    for scale in (100, 125, 150, 200, 400):
+        k = scale / 100
+        px = lambda v: round(v * k)
+        tile(px(150), px(150)).save(f"{folder}/Square150x150Logo.scale-{scale}.png")
+        tile(px(310), px(150), logo=0.70).save(f"{folder}/Wide310x150Logo.scale-{scale}.png")
+        tile(px(71), px(71), logo=0.70).save(f"{folder}/SmallTile.scale-{scale}.png")
+        tile(px(310), px(310)).save(f"{folder}/LargeTile.scale-{scale}.png")
+        draw(px(44)).save(f"{folder}/Square44x44Logo.scale-{scale}.png")
+        draw(px(50)).save(f"{folder}/StoreLogo.scale-{scale}.png")
+    # Taskbar, Start list, Alt+Tab, notifications: the rounded icon itself, with no plate behind it.
+    for size in (16, 20, 24, 30, 32, 36, 40, 48, 60, 64, 72, 80, 96, 256):
+        img = draw(size)
+        img.save(f"{folder}/Square44x44Logo.targetsize-{size}.png")
+        img.save(f"{folder}/Square44x44Logo.targetsize-{size}_altform-unplated.png")
+        img.save(f"{folder}/Square44x44Logo.targetsize-{size}_altform-lightunplated.png")
 
 
 # The same drawing as a vector (512 x 512), from the numbers in letters() and draw().
@@ -150,4 +188,5 @@ if __name__ == "__main__":
     draw(512).save(os.path.join(root, "assets", "logo.png"))
     with open(os.path.join(root, "assets", "logo.svg"), "w", encoding="utf-8") as f:
         f.write(SVG)
-    print("wrote", ico)
+    store_images(os.path.join(root, "packaging", "Images"))
+    print("wrote", ico, "and packaging/Images")

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  MSIX manifest for Wydscop. packaging/build-msix.ps1 fills in the $...$ values:
+    $IdentityName$, $Publisher$, $PublisherDisplayName$  from Partner Center (Product identity page)
+    $Version$                                             from <Version> in src/Wydscop/Wydscop.csproj, plus ".0"
+  Images come from tools/make-icon.py.
+-->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap desktop rescap">
+
+  <Identity
+    Name="$IdentityName$"
+    Publisher="$Publisher$"
+    Version="$Version$"
+    ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>Wydscop</DisplayName>
+    <PublisherDisplayName>$PublisherDisplayName$</PublisherDisplayName>
+    <Logo>Images\StoreLogo.png</Logo>
+    <Description>A fast, Spotlight-style search bar for Windows. Press Alt+Space, type a few letters, and open any app, file or folder.</Description>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+
+  <Applications>
+    <Application Id="Wydscop" Executable="Wydscop.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="Wydscop"
+        Description="Spotlight-style search for apps, files and folders. Alt+Space to open."
+        BackgroundColor="transparent"
+        Square150x150Logo="Images\Square150x150Logo.png"
+        Square44x44Logo="Images\Square44x44Logo.png">
+        <uap:DefaultTile
+          Wide310x150Logo="Images\Wide310x150Logo.png"
+          Square71x71Logo="Images\SmallTile.png"
+          Square310x310Logo="Images\LargeTile.png"
+          ShortName="Wydscop" />
+      </uap:VisualElements>
+
+      <Extensions>
+        <!-- "Start with Windows" for the packaged app (the Run key doesn't work inside a package).
+             TaskId must match StartupTaskId in src/Wydscop/Services/StartupManager.cs. -->
+        <desktop:Extension Category="windows.startupTask" Executable="Wydscop.exe" EntryPoint="Windows.FullTrustApplication">
+          <desktop:StartupTask TaskId="WydscopStartup" Enabled="false" DisplayName="Wydscop" />
+        </desktop:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <!-- A regular desktop app: global hotkey, tray icon, Windows Search index, opening any file. -->
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>
