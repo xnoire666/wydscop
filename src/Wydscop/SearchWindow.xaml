@@ -129,12 +129,12 @@
                         <ColumnDefinition Width="56" />
                     </Grid.ColumnDefinitions>
 
-                    <!-- Search icon: 17x17, 19 from the left edge -->
+                    <!-- Search icon: 17x17, 19 from the left edge, in the logo's aurora gradient -->
                     <TextBlock Grid.Column="0"
                                Text="&#xE721;"
                                FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets"
                                FontSize="17"
-                               Foreground="{DynamicResource Text.Hint}"
+                               Foreground="{DynamicResource SearchIcon}"
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"
                                Margin="18,0,0,0" />

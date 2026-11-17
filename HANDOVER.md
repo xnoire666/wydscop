@@ -137,7 +137,7 @@ Last updated: 17 Nov 2026. Branch `main`, everything pushed.
 ### Decisions the user made (don't undo without asking)
 
 Alt+Space hotkey; bar top at 14% of the screen; nothing highlighted on the empty bar until ↓; ✕ on recent
-rows on the left and the row pin on the right; taglines rotate every 30 s; Light theme by default; no
+rows on the left and the row pin on the right; taglines rotate every 30 s; Dark theme by default; no
 sections or "top hit" in search results; "Clear all" is red and clears in one click (no confirmation).
 
 ---
@@ -181,8 +181,10 @@ parts that matter later are summarized here.
 
 **Look**
 - Acrylic blur background.
-- **Light theme as the default.** The user wanted a gray that is neither too dark nor too light for most
-  people, and asked for it a bit darker than the first try.
+- **Dark theme as the default** (it matches the dark "WS" logo); it used to be Light. The Light theme is
+  a gray that is neither too dark nor too light, a bit darker than the first try.
+- The bar's **search icon uses the logo's aurora gradient** (sky blue → indigo → fuchsia → coral),
+  slightly deeper in the Light theme so it keeps its contrast.
 - The pin is a **realistic red push pin** (the pin itself is red, not its background), the same in both
   themes, and a bit bigger.
 

@@ -4,8 +4,10 @@ namespace Wydscop.Services;
 
 public enum BarTheme
 {
-    /// <summary>Soft gray (the default).</summary>
+    /// <summary>Soft gray.</summary>
     Light,
+
+    /// <summary>Warm dark gray (the default; matches the dark logo).</summary>
     Dark,
 
     /// <summary>Follows Windows' app mode (Settings > Personalization > Colors).</summary>
@@ -27,7 +29,7 @@ internal static class ThemeSettings
         catch
         {
         }
-        return BarTheme.Light;
+        return BarTheme.Dark;
     }
 
     public static void Save(BarTheme mode)

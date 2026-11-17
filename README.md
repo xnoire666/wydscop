@@ -26,7 +26,7 @@ Built with C# and WPF on .NET 10. Everything runs locally: no accounts, no netwo
 - **Pin the bar** to keep it open and in place while you work.
 - **Move and resize.** Drag the bar anywhere and drag its edges to change the width; it remembers both.
 - **Windows 11 look.** Frosted acrylic background, native rounded corners and shadow,
-  **Light** / **Dark** / **Match Windows** themes.
+  **Dark** (the default) / **Light** / **Match Windows** themes.
 - **No result limit.** 10 rows are visible; the rest scroll and load as you go.
 
 ## Requirements

@@ -89,7 +89,7 @@ same list; keyboard and mouse skip headings.
   short inline comments for non-obvious behavior. Keep the user-facing wording friendly and short.
 - **Behavior choices the user made** (don't undo without asking): Alt+Space hotkey; bar top at 14% of the
   screen by default; nothing highlighted on the empty bar until ↓; ✕ on recent rows is on the **left**,
-  the row pin on the **right**; placeholder taglines rotate every 30 s; Light theme is the default;
+  the row pin on the **right**; placeholder taglines rotate every 30 s; Dark theme is the default (it matches the dark logo); the bar's search icon uses the logo's aurora gradient (`SearchIcon` in `Themes.cs`);
   "Clear all" on Recent is red and clears in **one** click (no confirmation step);
   Ctrl+click / Ctrl+Space mark several results and Enter opens all marked.
 - **Privacy:** never commit personal data (names, paths under a real user profile, screenshots of the user's

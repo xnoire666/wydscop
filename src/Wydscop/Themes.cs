@@ -24,6 +24,7 @@ internal static class Themes
 
         resources["AcrylicTint"] = Gradient(palette.TintTop, palette.TintBottom);
         resources["SolidBackground"] = Gradient(palette.SolidTop, palette.SolidBottom);
+        resources["SearchIcon"] = Aurora(palette.SearchIcon);
         return new WindowColors(dark, palette.Border);
     }
 
@@ -31,7 +32,8 @@ internal static class Themes
         (string Key, Color Color)[] Colors,
         Color TintTop, Color TintBottom,   // over the acrylic blur
         Color SolidTop, Color SolidBottom, // when there's no acrylic
-        Color Border);
+        Color Border,
+        Color[] SearchIcon);               // the logo's aurora colors for the bar's search icon
 
     private static Color C(uint argb) =>
         Color.FromArgb((byte)(argb >> 24), (byte)(argb >> 16), (byte)(argb >> 8), (byte)argb);
@@ -44,7 +46,7 @@ internal static class Themes
     private static readonly Palette Light = new(
         [
             ("Text.Primary", C(0xFF1B1E23)),
-            ("Text.Hint", C(0xFF6A717C)),           // search icon, placeholder
+            ("Text.Hint", C(0xFF6A717C)),           // placeholder, dates
             ("Text.Muted", C(0xFF667080)),          // paths, "Recent", unpinned pin
             ("Icon.Subtle", C(0xFF5C6370)),         // ›, ✕
             ("Icon.Hover", C(0xFF1B1E23)),
@@ -65,7 +67,9 @@ internal static class Themes
         ],
         TintTop: C(0xF0EEF0F3), TintBottom: C(0xF0E6E9ED),
         SolidTop: C(0xFFEEF0F3), SolidBottom: C(0xFFE6E9ED),
-        Border: C(0xFFC4C9D0));
+        Border: C(0xFFC4C9D0),
+        // Deeper than the logo so the small glyph keeps its contrast on light gray.
+        SearchIcon: [C(0xFF0284C7), C(0xFF4F46E5), C(0xFFC026D3), C(0xFFE11D48)]);
 
     /// <summary>The original warm dark gray.</summary>
     private static readonly Palette Dark = new(
@@ -92,11 +96,24 @@ internal static class Themes
         ],
         TintTop: C(0x7A3E3D3C), TintBottom: C(0x7A292523),
         SolidTop: C(0xFF3E3D3C), SolidBottom: C(0xFF292523),
-        Border: C(0xFF5C5A58));
+        Border: C(0xFF5C5A58),
+        // The logo's colors: sky blue, indigo, fuchsia, coral.
+        SearchIcon: [C(0xFF38BDF8), C(0xFF818CF8), C(0xFFE879F9), C(0xFFFB7185)]);
 
     /// <summary>Top-to-bottom over the 56px bar; the results area below keeps the bottom color.</summary>
     private static Brush Gradient(Color top, Color bottom) =>
         Frozen(new LinearGradientBrush(top, bottom, new Point(0, 0), new Point(0, 56)) { MappingMode = BrushMappingMode.Absolute });
+
+    /// <summary>
+    /// Diagonal, top-left to bottom-right across the element, like the "WS" logo. The stops are spread
+    /// evenly at 0, 0.35, 0.7 and 1 to match the logo's gradient.
+    /// </summary>
+    private static Brush Aurora(Color[] colors)
+    {
+        double[] offsets = [0, 0.35, 0.7, 1];
+        var stops = new GradientStopCollection(colors.Select((c, i) => new GradientStop(c, offsets[i])));
+        return Frozen(new LinearGradientBrush(stops, new Point(0, 0), new Point(1, 1)));
+    }
 
     private static T Frozen<T>(T brush) where T : Freezable
     {
