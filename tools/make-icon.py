@@ -6,13 +6,14 @@ Needs Pillow (pip install pillow). Writes:
   assets/logo.png                  512 px logo for the README
   assets/logo.svg                  the same drawing as a vector
   packaging/Images/*.png           Microsoft Store (MSIX) tiles and icons, at every scale
+  assets/store/*.png               Store listing art: 9:16 poster (with the name) and 1:1 box art
 
 The logo is a "WS" monogram in glowing aurora colors (sky blue, indigo, fuchsia, coral) on a
 dark tile, with a small sparkle. The letters are drawn as thick rounded strokes, not set in a
 font, so the logo needs no font license. Tray sizes (24 px and below) fill the whole square,
 use bolder, brighter letters and drop the glow and sparkle so they stay crisp at 16 px.
 """
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 import math, os
 
 SS = 1024  # every size is drawn at this resolution, then scaled down
@@ -93,7 +94,7 @@ def sparkle(img, n, sx, sy, sr):
 def draw(size, rounded=True, background=True):
     """The logo at `size` px. rounded=False fills the whole square (Store tiles get their own
     shape from Windows); background=False draws only the letters, glow and sparkle."""
-    n = SS
+    n = max(SS, size)  # big Store art is drawn at full size so it stays sharp
     small = size <= 24
     out = (vertical(n, TILE_TOP, TILE_BOTTOM).convert("RGBA") if background
            else Image.new("RGBA", (n, n), (0, 0, 0, 0)))
@@ -148,6 +149,25 @@ def store_images(folder):
         img.save(f"{folder}/Square44x44Logo.targetsize-{size}_altform-lightunplated.png")
 
 
+def store_art(folder):
+    """Listing images for Partner Center (Store logos section). The poster carries the name under
+    the logo, in Segoe UI (Windows' own font), the same lowercase "wydscop" as the Store listing."""
+    os.makedirs(folder, exist_ok=True)
+
+    w, h = 1440, 2160
+    poster = vertical(h, TILE_TOP, TILE_BOTTOM).resize((w, h)).convert("RGBA")
+    s = round(w * 0.78)
+    poster.alpha_composite(draw(s, rounded=False, background=False), ((w - s) // 2, round(h * 0.40 - s / 2)))
+    font = ImageFont.truetype(os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts", "seguisb.ttf"), 150)
+    d = ImageDraw.Draw(poster)
+    name = "wydscop"
+    box = d.textbbox((0, 0), name, font=font)
+    d.text(((w - (box[2] - box[0])) / 2 - box[0], h * 0.66), name, font=font, fill=(242, 240, 255, 255))
+    poster.save(f"{folder}/poster-art-1440x2160.png")
+
+    tile(2160, 2160, logo=0.70).save(f"{folder}/box-art-2160x2160.png")
+
+
 # The same drawing as a vector (512 x 512), from the numbers in letters() and draw().
 SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
@@ -189,4 +209,5 @@ if __name__ == "__main__":
     with open(os.path.join(root, "assets", "logo.svg"), "w", encoding="utf-8") as f:
         f.write(SVG)
     store_images(os.path.join(root, "packaging", "Images"))
-    print("wrote", ico, "and packaging/Images")
+    store_art(os.path.join(root, "assets", "store"))
+    print("wrote", ico, "packaging/Images and assets/store")
