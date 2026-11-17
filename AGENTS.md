@@ -50,6 +50,7 @@ dotnet run --project src/Wydscop
 | Saved recent items, pins, open counts (JSON) | `src/Wydscop/Search/RecentStore.cs`, `PinnedStore.cs`, `UsageStore.cs` |
 | Shell icons with alpha, background loading | `src/Wydscop/Search/ShellIcons.cs`, `IconLoader.cs` |
 | Hotkey, tray, startup, settings, taglines, migration | `src/Wydscop/Services/*.cs` |
+| Logo and app/tray icon (generated; edit the script, not the images) | `tools/make-icon.py` → `src/Wydscop/Assets/Wydscop.ico`, `assets/logo.*` |
 | Win32 / DWM imports | `src/Wydscop/Interop/NativeMethods.cs` |
 
 **Result ordering** (`SortByScore` in `SearchWindow.Search.cs`): by `Matcher` score (exact 1000, starts with 900,

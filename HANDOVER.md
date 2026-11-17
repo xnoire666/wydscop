@@ -119,6 +119,9 @@ Last updated: 17 Nov 2026. Branch `main`, everything pushed.
 - **Open several at once:** Ctrl+click or Ctrl+Space marks results (blue tint and a bar on the left), Enter
   opens all marked, Ctrl+Enter shows them in File Explorer, Esc clears the marks. Marks are kept while you
   type, so you can mark results from several searches.
+- **Logo and tray icon:** a "WS" monogram in glowing aurora colors on a dark tile (`assets/logo.svg`,
+  `assets/logo.png`). `src/Wydscop/Assets/Wydscop.ico` is the exe and tray icon; all of them are drawn by
+  `tools/make-icon.py` (needs Pillow), so change the design there and rerun it.
 
 ### Worth checking
 

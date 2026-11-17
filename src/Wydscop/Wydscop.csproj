@@ -13,12 +13,19 @@
     <NoWarn>$(NoWarn);WFO0003</NoWarn>
     <AssemblyTitle>Wydscop</AssemblyTitle>
     <Product>Wydscop</Product>
+    <!-- Exe icon (Explorer, Start with Windows, Task Manager). Regenerate with tools/make-icon.py. -->
+    <ApplicationIcon>Assets\Wydscop.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <!-- Avoid WPF / WinForms name clashes (Application, MessageBox, KeyEventArgs...). -->
     <Using Remove="System.Windows.Forms" />
     <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The same icon, loaded at the right size for the tray (see TrayIcon.LoadIcon). -->
+    <EmbeddedResource Include="Assets\Wydscop.ico" LogicalName="Wydscop.ico" />
   </ItemGroup>
 
   <ItemGroup>

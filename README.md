@@ -1,4 +1,6 @@
-﻿# Wydscop
+﻿<img src="assets/logo.png" alt="Wydscop logo" width="96" />
+
+# Wydscop
 
 A fast, Spotlight-style search bar for Windows. Press **Alt+Space** anywhere, type a few letters,
 and open any app, file or folder on your PC.

@@ -46,7 +46,7 @@ internal sealed class TrayIcon : IDisposable
 
         _icon = new Forms.NotifyIcon
         {
-            Icon = System.Drawing.SystemIcons.Application,
+            Icon = LoadIcon(),
             Text = $"Wydscop ({hotkeyName})",
             ContextMenuStrip = menu,
             Visible = true,
@@ -55,6 +55,18 @@ internal sealed class TrayIcon : IDisposable
         {
             if (e.Button == Forms.MouseButtons.Left) open();
         };
+    }
+
+    /// <summary>
+    /// The Wydscop icon from the embedded .ico, picked at the tray's small-icon size so it
+    /// stays sharp at 125% / 150% scaling instead of being shrunk from a big frame.
+    /// </summary>
+    private static System.Drawing.Icon LoadIcon()
+    {
+        using var stream = typeof(TrayIcon).Assembly.GetManifestResourceStream("Wydscop.ico");
+        return stream is null
+            ? System.Drawing.SystemIcons.Application
+            : new System.Drawing.Icon(stream, Forms.SystemInformation.SmallIconSize);
     }
 
     public void ShowMessage(string title, string text, bool warning = false)
