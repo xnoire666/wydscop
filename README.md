@@ -1,6 +1,10 @@
-﻿<img src="assets/logo.png" alt="Wydscop logo" width="96" />
+﻿<p align="center">
+  <img src="assets/logo.png" alt="Wydscop logo" width="96" />
+</p>
 
-# Wydscop
+<h1 align="center">Wydscop</h1>
+
+<p align="center"><i>Pronounced "wide scope"</i></p>
 
 A fast, Spotlight-style search bar for Windows. Press **Alt+Space** anywhere, type a few letters,
 and open any app, file or folder on your PC.
