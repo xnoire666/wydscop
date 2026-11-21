@@ -142,6 +142,10 @@ Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **publi
   up, GitHub releases are unsigned until then, and the Store version is signed by Microsoft. Switch both back
   to the plain SignPath credit once the first signed release is out.
 - **No roadmap:** the user has none planned, so the README and this file don't list one.
+- **Commit identity is the maintainer's only** (commit `482b9a5`): step 3 above, `AGENTS.md` and the README
+  tell forks and contributors to commit with their own GitHub identity, and AI tools never to set the
+  `xnoire666` identity themselves. Before this, a fork following these docs would have committed as
+  xnoire666. The maintainer's own clone is unchanged.
 - **Ready for SignPath (free code signing):** MIT `LICENSE`, `CODE_SIGNING.md` (roles, privacy, credit
   line), and a `sign-and-release` job in `build.yml` that runs only for `v*` tags once the repo has the
   `SIGNPATH_ORGANIZATION_ID` variable and `SIGNPATH_API_TOKEN` secret. Git history was checked for personal
