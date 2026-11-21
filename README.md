@@ -151,6 +151,11 @@ at the top of a drive (`Windows`, `Program Files`, `ProgramData`…).
 | `packaging/` | Microsoft Store (MSIX) manifest, tile images, build script and submission guide |
 | `tools/make-icon.py` | Draws the logo, the app/tray icon and the Store images |
 
+## Contributing and bugs
+
+Found a bug? Open an issue with the **Bug report** form. Want to help? See [CONTRIBUTING.md](CONTRIBUTING.md).
+Security problems go privately through the repository's Security tab; see [SECURITY.md](SECURITY.md).
+
 ## License
 
 [MIT](LICENSE).

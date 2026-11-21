@@ -1,0 +1,86 @@
+name: Bug report
+description: Something in Wydscop doesn't work as it should
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please don't include personal information: if you paste paths, file names or
+        the log, replace your own names (e.g. your Windows user name) with something generic first.
+        For a security problem, don't open an issue; see SECURITY.md instead.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What went wrong, and what did you expect instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Press Alt+Space
+        2. Type ...
+        3. ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install
+    attributes:
+      label: Where did you get Wydscop?
+      options:
+        - Microsoft Store
+        - Wydscop.exe from GitHub Releases
+        - Built it myself
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Wydscop version
+      description: |
+        Store: Settings → Apps → Installed apps → wydscop → ⋯ → Advanced options.
+        Exe: right-click Wydscop.exe → Properties → Details → Product version.
+      placeholder: e.g. 1.0.0
+    validations:
+      required: true
+
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      description: Press Win+R, type `winver`, press Enter.
+      placeholder: e.g. Windows 11 23H2 (build 22631)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: theme
+    attributes:
+      label: Wydscop theme
+      options:
+        - Dark
+        - Light
+        - Match Windows
+        - Not sure
+
+  - type: textarea
+    id: log
+    attributes:
+      label: Log (optional)
+      description: |
+        The log is at `%LocalAppData%\Wydscop\wydscop.log` (the Store version may keep it under
+        `%LocalAppData%\Packages\...\LocalCache\Local\Wydscop\`). It starts fresh on every launch, so copy it
+        right after the problem happens. Remove personal names and paths first.
+      render: text
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Screenshots of the bar help, as long as they don't show personal files.

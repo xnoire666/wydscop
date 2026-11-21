@@ -152,6 +152,11 @@ Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **publi
   later releases, the `virustotal` job in `build.yml` runs after `sign-and-release`, uploads the released exe
   through the VirusTotal API, waits for the scan and appends the same line to the notes (a flagged result is
   written as it is and raises a warning on the run). It skips itself without the `VIRUSTOTAL_API_KEY` secret.
+- **Contributor docs:** `CONTRIBUTING.md` (build, PR rules, the user's fixed behavior choices; points to
+  AGENTS.md), a **Bug report** issue form (`.github/ISSUE_TEMPLATE/bug_report.yml`; asks for install source,
+  version, Windows version, theme, optional log with personal paths removed), `config.yml` (no blank issues;
+  links to usage and the security policy), and `SECURITY.md` (report privately via the Security tab). No
+  feature request form, since there's no roadmap. Linked from the README's "Contributing and bugs".
 - **Commit identity is the maintainer's only** (commit `482b9a5`): step 3 above, `AGENTS.md` and the README
   tell forks and contributors to commit with their own GitHub identity, and AI tools never to set the
   `xnoire666` identity themselves. Before this, a fork following these docs would have committed as

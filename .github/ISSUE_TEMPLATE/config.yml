@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: How to use Wydscop
+    url: https://github.com/xnoire666/wydscop#using-it
+    about: Keyboard shortcuts and what each key does.
+  - name: Report a security problem
+    url: https://github.com/xnoire666/wydscop/security/policy
+    about: Please report security problems privately, not as a public issue.
