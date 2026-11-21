@@ -147,6 +147,7 @@ at the top of a drive (`Windows`, `Program Files`, `ProgramData`…).
 
 ## Code signing
 
-Free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by
-[SignPath Foundation](https://signpath.org/). Only release builds made by this repository's GitHub
-Actions workflow are signed; see [CODE_SIGNING.md](CODE_SIGNING.md).
+Free code signing through [SignPath Foundation](https://signpath.org/) is being set up. Until it's
+active, the `Wydscop.exe` on Releases is unsigned. The
+[Microsoft Store](https://apps.microsoft.com/detail/9P47NSX5N7RJ) version is signed by Microsoft. See
+[CODE_SIGNING.md](CODE_SIGNING.md).

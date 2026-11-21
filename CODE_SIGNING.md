@@ -1,5 +1,8 @@
 # Code signing policy
 
+> **Status:** being set up with SignPath Foundation; not active yet, so current releases on GitHub are
+> unsigned. The Microsoft Store version is signed by Microsoft.
+
 Free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by
 [SignPath Foundation](https://signpath.org/).
 
