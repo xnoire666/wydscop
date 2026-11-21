@@ -156,11 +156,6 @@ Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **publi
 - The last two features built cleanly and the app ran, but they were only lightly tried. Check "Clear all"
   and marked rows in **both** themes, and try Ctrl+click on recent and pinned rows.
 
-### Ideas not started (from the README roadmap)
-
-- Configurable hotkey.
-- Calculator and web search results.
-
 ### Decisions the user made (don't undo without asking)
 
 Alt+Space hotkey; bar top at 14% of the screen; nothing highlighted on the empty bar until ↓; ✕ on recent
@@ -233,9 +228,6 @@ the match is, with no grouping.
   why step 3 above matters.
 - `AGENTS.md` was added for all AI coding tools, plus a one-line `CLAUDE.md` (`@AGENTS.md`) so Claude Code
   reads the same file.
-
-**Parked:** a custom icon for the tray and the `.exe`, which still use the generic Windows app icon. It
-is on the README roadmap.
 
 **Graphify** (a code-graph tool that claims to save tokens) was looked at and **not added**:
 - The project is small, about 5,000 lines.

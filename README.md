@@ -136,11 +136,6 @@ at the top of a drive (`Windows`, `Program Files`, `ProgramData`…).
 | `packaging/` | Microsoft Store (MSIX) manifest, tile images, build script and submission guide |
 | `tools/make-icon.py` | Draws the logo, the app/tray icon and the Store images |
 
-## Roadmap
-
-- Configurable hotkey
-- Calculator and web search results
-
 ## License
 
 [MIT](LICENSE).
