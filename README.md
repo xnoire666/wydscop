@@ -11,6 +11,13 @@ and open any app, file or folder on your PC.
 
 Built with C# and WPF on .NET 10. Everything runs locally: no accounts, no network, no telemetry.
 
+<p align="center">
+  <img src="assets/demo.gif" alt="The Wydscop bar searching for &quot;calc&quot;: the Calculator app, files and a folder in one list; arrow keys move down, → looks inside the FastCalc folder and ← goes back" width="640" />
+</p>
+
+**Download:** get `Wydscop.exe` from [Releases](https://github.com/xnoire666/wydscop/releases). It's a single
+file for Windows 10/11 (x64); no install or .NET needed.
+
 ---
 
 ## Features

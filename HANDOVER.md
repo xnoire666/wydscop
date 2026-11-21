@@ -107,7 +107,7 @@ missing drive) are simply hidden, not errors. Don't commit these files: they hol
 
 ## Where the work stands
 
-Last updated: 17 Nov 2026. Branch `main`, everything pushed.
+Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **public**.
 
 ### Done
 
@@ -127,21 +127,26 @@ Last updated: 17 Nov 2026. Branch `main`, everything pushed.
   build script and a step-by-step submission guide (`packaging/README.md`); `PRIVACY.md` is the privacy
   policy. Start with Windows uses a package startup task when installed as MSIX. Tested by installing the
   unpacked package with `-Register`: the bar, hotkey and startup task worked.
-
 - **Ready for SignPath (free code signing):** MIT `LICENSE`, `CODE_SIGNING.md` (roles, privacy, credit
   line), and a `sign-and-release` job in `build.yml` that runs only for `v*` tags once the repo has the
   `SIGNPATH_ORGANIZATION_ID` variable and `SIGNPATH_API_TOKEN` secret. Git history was checked for personal
   data before going public: clean.
+- **First release, v1.0.0 (22 Nov 2026), unsigned:** on GitHub Releases with the CI-built `Wydscop.exe` from
+  commit `d9e6475` (Actions run 44941565599). The notes explain the SmartScreen "Run anyway" step and give the
+  exe's SHA-256. Made by hand with `gh release create`, since the signing job isn't set up yet.
 
 ### Worth checking
 
-- **SignPath not set up yet:** make the repo public, apply at signpath.org, then in SignPath create project
-  `wydscop`, an artifact configuration (zip containing the PE file `Wydscop.exe`) and the signing policy
-  `release-signing`; install the SignPath GitHub App; add the variable and secret above. Push a `v*` tag and
-  approve the request in SignPath to get the first signed release. The job has not run yet.
+- **SignPath not set up yet:** apply at signpath.org (give the Releases page as the download page), then in
+  SignPath create project `wydscop`, an artifact configuration (zip containing the PE file `Wydscop.exe`) and
+  the signing policy `release-signing`; install the SignPath GitHub App; add the variable and secret above.
+  The first signed release needs a **new** tag (e.g. `v1.0.1`, with `<Version>` in the csproj bumped to
+  match), because `v1.0.0` already has a release and `gh release create` in the job would fail on it.
+  Approve the request in SignPath. The job has not run yet.
 
 - **Store submission not done yet:** reserve the name in Partner Center, build with the real identity values,
-  host `PRIVACY.md` at a public URL, take screenshots, upload (steps in `packaging/README.md`).
+  take screenshots, upload (steps in `packaging/README.md`). Now that the repo is public, `PRIVACY.md` on
+  GitHub can serve as the privacy policy URL.
 
 - The last two features built cleanly and the app ran, but they were only lightly tried. Check "Clear all"
   and marked rows in **both** themes, and try Ctrl+click on recent and pinned rows.
