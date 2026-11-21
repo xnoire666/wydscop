@@ -131,4 +131,10 @@ at the top of a drive (`Windows`, `Program Files`, `ProgramData`…).
 
 ## License
 
-Private project. Copyright © 2026. All rights reserved.
+[MIT](LICENSE).
+
+## Code signing
+
+Free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by
+[SignPath Foundation](https://signpath.org/). Only release builds made by this repository's GitHub
+Actions workflow are signed; see [CODE_SIGNING.md](CODE_SIGNING.md).

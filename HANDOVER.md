@@ -128,7 +128,17 @@ Last updated: 17 Nov 2026. Branch `main`, everything pushed.
   policy. Start with Windows uses a package startup task when installed as MSIX. Tested by installing the
   unpacked package with `-Register`: the bar, hotkey and startup task worked.
 
+- **Ready for SignPath (free code signing):** MIT `LICENSE`, `CODE_SIGNING.md` (roles, privacy, credit
+  line), and a `sign-and-release` job in `build.yml` that runs only for `v*` tags once the repo has the
+  `SIGNPATH_ORGANIZATION_ID` variable and `SIGNPATH_API_TOKEN` secret. Git history was checked for personal
+  data before going public: clean.
+
 ### Worth checking
+
+- **SignPath not set up yet:** make the repo public, apply at signpath.org, then in SignPath create project
+  `wydscop`, an artifact configuration (zip containing the PE file `Wydscop.exe`) and the signing policy
+  `release-signing`; install the SignPath GitHub App; add the variable and secret above. Push a `v*` tag and
+  approve the request in SignPath to get the first signed release. The job has not run yet.
 
 - **Store submission not done yet:** reserve the name in Partner Center, build with the real identity values,
   host `PRIVACY.md` at a public URL, take screenshots, upload (steps in `packaging/README.md`).

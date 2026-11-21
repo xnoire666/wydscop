@@ -24,7 +24,8 @@ dotnet run --project src/Wydscop
   `-Register` to install it for your user and try it (needs Developer Mode). Bump `<Version>` in the csproj
   for each Store upload.
 - Release / CI build: `dotnet build Wydscop.slnx -c Release`. CI (`.github/workflows/build.yml`) also
-  publishes a self-contained, compressed single-file `Wydscop.exe` as an artifact.
+  publishes a self-contained, compressed single-file `Wydscop.exe` as an artifact. A `v*` tag also has
+  SignPath sign it and creates a GitHub Release (`CODE_SIGNING.md`); only CI builds are ever signed.
 - There are **no automated tests**. Verify changes by building, running the app, and reading the log at
   `%LocalAppData%\Wydscop\wydscop.log` (reset on every launch). For UI changes, check both themes.
 

@@ -1,10 +1,16 @@
 # Builds Wydscop on every push and pull request, and attaches a ready-to-run Wydscop.exe
 # (self-contained, single file, no .NET install needed) to the run as a downloadable artifact.
+#
+# Pushing a version tag (e.g. v1.2.0) also has SignPath sign that exe and publishes it as a GitHub
+# Release. The signing job stays off until the repo has the SignPath settings (see CODE_SIGNING.md):
+#   - variable SIGNPATH_ORGANIZATION_ID (Settings → Secrets and variables → Actions → Variables)
+#   - secret   SIGNPATH_API_TOKEN
 name: Build
 
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -15,6 +21,8 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
+    outputs:
+      artifact-id: ${{ steps.upload.outputs.artifact-id }}
 
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +41,36 @@ jobs:
           -p:EnableCompressionInSingleFile=true -o publish
 
       - uses: actions/upload-artifact@v4
+        id: upload
         with:
           name: Wydscop-win-x64
           path: publish/Wydscop.exe
           retention-days: 30
+
+  # Only for version tags: SignPath checks the exe was built by the job above from this repo, waits for
+  # the release to be approved in SignPath, and hands back the signed exe.
+  sign-and-release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v') && vars.SIGNPATH_ORGANIZATION_ID != ''
+    runs-on: windows-latest
+    permissions:
+      contents: write   # to create the GitHub Release
+      actions: read     # so SignPath can fetch the build artifact
+
+    steps:
+      - uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: wydscop
+          signing-policy-slug: release-signing
+          github-artifact-id: ${{ needs.build.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed
+
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release create "${{ github.ref_name }}" signed/Wydscop.exe
+          --repo "${{ github.repository }}" --title "Wydscop ${{ github.ref_name }}" --generate-notes
