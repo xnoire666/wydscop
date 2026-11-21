@@ -1,6 +1,11 @@
 # Builds Wydscop on every push and pull request, and attaches a ready-to-run Wydscop.exe
 # (self-contained, single file, no .NET install needed) to the run as a downloadable artifact.
 #
+# Every exe built for a push to this repo also gets a SHA256SUMS.txt and a GitHub build attestation:
+# signed proof that this exact file came from this workflow and commit. Anyone can check it with
+#   gh attestation verify Wydscop.exe --repo xnoire666/wydscop
+# Pull requests skip the attestation (a fork's PR can't get the signing token it needs).
+#
 # Pushing a version tag (e.g. v1.2.0) also has SignPath sign that exe and publishes it as a GitHub
 # Release. The signing job stays off until the repo has the SignPath settings (see CODE_SIGNING.md):
 #   - variable SIGNPATH_ORGANIZATION_ID (Settings → Secrets and variables → Actions → Variables)
@@ -21,6 +26,10 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: read
+      id-token: write       # for the build attestation's signing certificate
+      attestations: write   # to store the attestation on the repo
     outputs:
       artifact-id: ${{ steps.upload.outputs.artifact-id }}
 
@@ -40,11 +49,28 @@ jobs:
           --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
           -p:EnableCompressionInSingleFile=true -o publish
 
+      - name: Checksum
+        shell: bash
+        run: cd publish && sha256sum Wydscop.exe > SHA256SUMS.txt && cat SHA256SUMS.txt
+
+      - name: Attest where the exe came from
+        if: github.event_name != 'pull_request'
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: publish/Wydscop.exe
+
+      # Kept to the exe alone: this is the artifact SignPath signs on version tags.
       - uses: actions/upload-artifact@v4
         id: upload
         with:
           name: Wydscop-win-x64
           path: publish/Wydscop.exe
+          retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Wydscop-win-x64-SHA256SUMS
+          path: publish/SHA256SUMS.txt
           retention-days: 30
 
   # Only for version tags: SignPath checks the exe was built by the job above from this repo, waits for
@@ -54,8 +80,10 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v') && vars.SIGNPATH_ORGANIZATION_ID != ''
     runs-on: windows-latest
     permissions:
-      contents: write   # to create the GitHub Release
-      actions: read     # so SignPath can fetch the build artifact
+      contents: write       # to create the GitHub Release
+      actions: read         # so SignPath can fetch the build artifact
+      id-token: write       # signing changes the file, so the signed exe gets its own attestation
+      attestations: write
 
     steps:
       - uses: signpath/github-action-submit-signing-request@v1
@@ -68,9 +96,17 @@ jobs:
           wait-for-completion: true
           output-artifact-directory: signed
 
+      - name: Checksum the signed exe
+        shell: bash
+        run: cd signed && sha256sum Wydscop.exe > SHA256SUMS.txt && cat SHA256SUMS.txt
+
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: signed/Wydscop.exe
+
       - name: Create the GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: >
-          gh release create "${{ github.ref_name }}" signed/Wydscop.exe
+          gh release create "${{ github.ref_name }}" signed/Wydscop.exe signed/SHA256SUMS.txt
           --repo "${{ github.repository }}" --title "Wydscop ${{ github.ref_name }}" --generate-notes

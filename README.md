@@ -23,6 +23,20 @@ Built with C# and WPF on .NET 10. Everything runs locally: no accounts, no netwo
 Microsoft, updates automatically), or get `Wydscop.exe` from [Releases](https://github.com/xnoire666/wydscop/releases).
 The exe is a single file for Windows 10/11 (x64); no install or .NET needed.
 
+**Check your download.** The exe isn't code-signed yet, so Windows may warn about it. To check it's the
+genuine file, built by this repository's GitHub Actions from its public source, verify its build
+attestation with the [GitHub CLI](https://cli.github.com/):
+
+```bash
+gh attestation verify Wydscop.exe --repo xnoire666/wydscop
+```
+
+Or compare its checksum with the release's `SHA256SUMS.txt` (or the SHA-256 in the release notes):
+
+```powershell
+Get-FileHash Wydscop.exe
+```
+
 ---
 
 ## Features
