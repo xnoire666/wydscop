@@ -15,7 +15,7 @@ changing anything), see [AGENTS.md](AGENTS.md).
 | Windows 10 or 11 (x64) | The app is Windows-only (WPF, Win32, DWM). Acrylic needs Windows 11 22H2+. | |
 | .NET 10 SDK | Build and run | `winget install Microsoft.DotNet.SDK.10` |
 | Git | Source control | `winget install Git.Git` |
-| GitHub CLI | Signing in to the private repo, pushing workflow files | `winget install GitHub.cli` |
+| GitHub CLI | Pushing to the repo, pushing workflow files, making releases | `winget install GitHub.cli` |
 | An editor | Visual Studio 2026, VS Code with C# Dev Kit, or Rider | |
 
 Check the SDK:
@@ -26,7 +26,7 @@ dotnet --list-sdks
 
 ## 2. Sign in and clone
 
-The repo is **private**: `https://github.com/xnoire666/wydscop`.
+The repo is **public**: `https://github.com/xnoire666/wydscop`. Anyone can clone it; pushing needs the GitHub login.
 
 ```bash
 gh auth login
