@@ -127,6 +127,10 @@ Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **publi
   build script and a step-by-step submission guide (`packaging/README.md`); `PRIVACY.md` is the privacy
   policy. Start with Windows uses a package startup task when installed as MSIX. Tested by installing the
   unpacked package with `-Register`: the bar, hotkey and startup task worked.
+- **Live in the Microsoft Store** as "wydscop", product ID `9P47NSX5N7RJ`
+  (https://apps.microsoft.com/detail/9P47NSX5N7RJ; MSIX, submission 1, last modified 18 Nov 2026). The README
+  has the "Get it from Microsoft" badge. Further
+  changes go through **Start update** on the product page in Partner Center.
 - **Ready for SignPath (free code signing):** MIT `LICENSE`, `CODE_SIGNING.md` (roles, privacy, credit
   line), and a `sign-and-release` job in `build.yml` that runs only for `v*` tags once the repo has the
   `SIGNPATH_ORGANIZATION_ID` variable and `SIGNPATH_API_TOKEN` secret. Git history was checked for personal
@@ -144,9 +148,10 @@ Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **publi
   match), because `v1.0.0` already has a release and `gh release create` in the job would fail on it.
   Approve the request in SignPath. The job has not run yet.
 
-- **Store submission not done yet:** reserve the name in Partner Center, build with the real identity values,
-  take screenshots, upload (steps in `packaging/README.md`). Now that the repo is public, `PRIVACY.md` on
-  GitHub can serve as the privacy policy URL.
+- **Store listing refresh not done yet:** new listing text in `packaging/store-listing.md` and 1920×1080
+  screenshots in `assets/store/` (bar captures with generic `C:\xampp` paths on a drawn background) are ready
+  to apply with **Start update** in Partner Center. A listing-only update needs no new package; any new
+  package needs a higher `<Version>` than the live one.
 
 - The last two features built cleanly and the app ran, but they were only lightly tried. Check "Clear all"
   and marked rows in **both** themes, and try Ctrl+click on recent and pinned rows.

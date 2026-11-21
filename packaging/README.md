@@ -13,8 +13,8 @@ or from [the Windows SDK page](https://developer.microsoft.com/windows/downloads
 
 ## 1. Reserve the name (once)
 
-1. Sign up for a developer account at [Partner Center](https://partner.microsoft.com/dashboard) (one-time fee
-   for individuals).
+1. Sign up for a developer account at [Partner Center](https://partner.microsoft.com/dashboard) (free for
+   individuals as of 2025; check the current terms when you sign up).
 2. **Apps and games → New product → MSIX or PWA app**, reserve the name **Wydscop**.
 3. Open **Product management → Product identity** and copy three values:
    - `Package/Identity/Name` (looks like `12345YourName.Wydscop`)
@@ -62,12 +62,11 @@ in Start) on the `.msix`; the Store runs the same checks after upload.
   > Wydscop is a desktop search bar (WPF). It needs full trust to register its global Alt+Space hotkey,
   > show a notification-area icon, query the Windows Search index, and open the apps, files and folders
   > the user picks.
-- **Privacy policy URL:** the app reads file and app names on the PC, so the Store may ask for one. The text
-  is in [`PRIVACY.md`](../PRIVACY.md); it must be at a public URL (this repository is private), for example
-  a GitHub Gist or a GitHub Pages site.
-- **Store listing:** description and features from the main README, at least one screenshot of the bar
-  (1366×768 or larger, without personal files in it), and the 300×300 logo from `assets/logo.png`
-  (resize it, or render a bigger one by editing `tools/make-icon.py`).
+- **Privacy policy URL:** the app reads file and app names on the PC, so the Store may ask for one. Use
+  `https://github.com/xnoire666/wydscop/blob/main/PRIVACY.md` (the repository is public).
+- **Store listing:** the description, features, keywords, screenshot captions and other fields are ready to
+  paste in [`store-listing.md`](store-listing.md). Screenshots (1920×1080, generic paths on a drawn
+  background) and the box and poster art are in `assets/store/`.
 - **Pricing and availability, Age ratings:** fill in as you like; the questionnaire is short for a utility.
 
 ## What changes inside the package

@@ -15,8 +15,13 @@ Built with C# and WPF on .NET 10. Everything runs locally: no accounts, no netwo
   <img src="assets/demo.gif" alt="The Wydscop bar searching for &quot;calc&quot;: the Calculator app, files and a folder in one list; arrow keys move down, → looks inside the FastCalc folder and ← goes back" width="640" />
 </p>
 
-**Download:** get `Wydscop.exe` from [Releases](https://github.com/xnoire666/wydscop/releases). It's a single
-file for Windows 10/11 (x64); no install or .NET needed.
+<p align="center">
+  <a href="https://apps.microsoft.com/detail/9P47NSX5N7RJ"><img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Get it from Microsoft" width="200" /></a>
+</p>
+
+**Download:** install it from the [Microsoft Store](https://apps.microsoft.com/detail/9P47NSX5N7RJ) (signed by
+Microsoft, updates automatically), or get `Wydscop.exe` from [Releases](https://github.com/xnoire666/wydscop/releases).
+The exe is a single file for Windows 10/11 (x64); no install or .NET needed.
 
 ---
 
