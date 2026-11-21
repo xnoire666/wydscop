@@ -48,8 +48,12 @@ gh auth refresh -s workflow
 
 ## 3. Set the commit identity (does not come with the clone)
 
-This repo commits as the GitHub no-reply identity, set in the repo's **local** git config. Local config is
-not part of a clone, so set it again on every new machine, inside the cloned folder:
+> **Forked the repo or contributing?** Skip the two commands below and commit with **your own** GitHub
+> identity, ideally your own no-reply email (GitHub → Settings → Emails). Never commit as the maintainer.
+
+The maintainer (xnoire666) commits as their GitHub no-reply identity, set in the repo's **local** git
+config. Local config is not part of a clone, so the maintainer sets it again on every new machine, inside
+the cloned folder:
 
 ```bash
 git config user.name "xnoire666"
@@ -59,7 +63,7 @@ git config user.name "xnoire666"
 git config user.email "7259786+xnoire666@users.noreply.github.com"
 ```
 
-Don't use the machine's global git identity for this repo.
+On the maintainer's machines, don't use the machine's global git identity for this repo.
 
 ## 4. Build and run
 

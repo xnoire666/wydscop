@@ -110,7 +110,10 @@ same list; keyboard and mouse skip headings.
 ## Git
 
 - Default branch `main`, remote `https://github.com/xnoire666/wydscop` (public; anything committed is visible to everyone, so the privacy rule above matters).
-- This repo commits as `xnoire666 <7259786+xnoire666@users.noreply.github.com>` (repo-local `git config`).
-  Don't change it, and don't use the machine's global git identity here.
+- **Commit identity is the maintainer's only.** In the maintainer's (xnoire666) own clone, commits use
+  `xnoire666 <7259786+xnoire666@users.noreply.github.com>` from the repo-local `git config`; don't change it
+  there, and don't use the machine's global git identity. **Never set this identity yourself:** if the
+  repo-local config doesn't already have it (a fork, or someone else's clone), commit with whatever identity
+  that person has configured.
 - Pushing `.github/workflows/*` needs a GitHub login with the `workflow` scope (`gh auth refresh -s workflow`).
 - Commit or push only when asked.

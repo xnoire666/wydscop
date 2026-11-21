@@ -65,7 +65,8 @@ dotnet run --project src/Wydscop
 Wydscop starts in the notification area (tray) and turns on **Start with Windows** on first launch.
 Exit it from the tray menu before rebuilding, since the running app locks its `.exe`.
 
-Setting up to develop on another PC (clone, git identity, moving your data): see [HANDOVER.md](HANDOVER.md).
+Setting up to develop on another PC (clone, commit settings, moving your data): see [HANDOVER.md](HANDOVER.md).
+If you forked the repo, commit with your own GitHub identity.
 
 To make a standalone build you can copy to another PC:
 
