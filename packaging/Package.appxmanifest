@@ -22,7 +22,7 @@
     <DisplayName>wydscop</DisplayName>
     <PublisherDisplayName>$PublisherDisplayName$</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
-    <Description>A fast, Spotlight-style search bar for Windows. Press Alt+Space, type a few letters, and open any app, file or folder.</Description>
+    <Description>A fast search bar for Windows. Press Alt+Space, type a few letters, and open any app, file or folder.</Description>
   </Properties>
 
   <Dependencies>
@@ -37,7 +37,7 @@
     <Application Id="Wydscop" Executable="Wydscop.exe" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
         DisplayName="wydscop"
-        Description="Spotlight-style search for apps, files and folders. Alt+Space to open."
+        Description="Fast search for apps, files and folders. Alt+Space to open."
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">
