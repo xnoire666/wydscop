@@ -10,6 +10,8 @@
 # Release. The signing job stays off until the repo has the SignPath settings (see CODE_SIGNING.md):
 #   - variable SIGNPATH_ORGANIZATION_ID (Settings → Secrets and variables → Actions → Variables)
 #   - secret   SIGNPATH_API_TOKEN
+# After the release is made, the virustotal job scans its exe and adds the result to the release notes.
+# It skips itself until the repo has the secret VIRUSTOTAL_API_KEY (a free virustotal.com account).
 name: Build
 
 on:
@@ -110,3 +112,60 @@ jobs:
         run: >
           gh release create "${{ github.ref_name }}" signed/Wydscop.exe signed/SHA256SUMS.txt
           --repo "${{ github.repository }}" --title "Wydscop ${{ github.ref_name }}" --generate-notes
+
+  # Scans the released exe on VirusTotal and appends the result ("0 of 69 security vendors flagged this
+  # file", linked to the report) to the release notes. A flagged result is written down as it is, never
+  # hidden, and also shows as a warning on the run so it can be checked and reported as a false alarm.
+  virustotal:
+    needs: sign-and-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # to download the release's exe and edit its notes
+    env:
+      VT_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
+      GH_TOKEN: ${{ github.token }}
+      TAG: ${{ github.ref_name }}
+      REPO: ${{ github.repository }}
+
+    steps:
+      - name: Skip without an API key
+        if: env.VT_KEY == ''
+        run: echo "No VIRUSTOTAL_API_KEY secret; skipping the VirusTotal scan."
+
+      - name: Scan on VirusTotal and note the result
+        if: env.VT_KEY != ''
+        run: |
+          set -euo pipefail
+          gh release download "$TAG" -p Wydscop.exe -D vt --repo "$REPO"
+          sha=$(sha256sum vt/Wydscop.exe | cut -d' ' -f1)
+
+          # The exe is over 32 MB, so it goes to a one-time large-file upload address.
+          upload_url=$(curl -sSf -H "x-apikey: $VT_KEY" https://www.virustotal.com/api/v3/files/upload_url | jq -r .data)
+          analysis=$(curl -sSf -H "x-apikey: $VT_KEY" -F "file=@vt/Wydscop.exe" "$upload_url" | jq -r .data.id)
+
+          # Poll every 30 s (the free API allows 4 requests a minute), for up to 20 minutes.
+          status=queued
+          for _ in $(seq 1 40); do
+            sleep 30
+            result=$(curl -sSf -H "x-apikey: $VT_KEY" "https://www.virustotal.com/api/v3/analyses/$analysis")
+            status=$(jq -r .data.attributes.status <<<"$result")
+            [ "$status" = completed ] && break
+          done
+          if [ "$status" != completed ]; then
+            echo "::warning::The VirusTotal scan didn't finish in 20 minutes; add the result by hand: https://www.virustotal.com/gui/file/$sha"
+            exit 0
+          fi
+
+          # Count engines that gave a verdict (not ones that timed out or don't support the file type).
+          flagged=$(jq '.data.attributes.stats | .malicious + .suspicious' <<<"$result")
+          total=$(jq '.data.attributes.stats | .malicious + .suspicious + .undetected + .harmless' <<<"$result")
+          link="https://www.virustotal.com/gui/file/$sha"
+          line="**VirusTotal:** [$flagged of $total security vendors flagged this file]($link) (scanned $(date -u '+%-d %b %Y'))."
+          if [ "$flagged" -gt 0 ]; then
+            echo "::warning::VirusTotal: $flagged of $total vendors flagged Wydscop.exe. Check $link and report false alarms."
+          fi
+          echo "$line"
+
+          gh release view "$TAG" --repo "$REPO" --json body -q .body > notes.md
+          printf '\n%s\n' "$line" >> notes.md
+          gh release edit "$TAG" --repo "$REPO" --notes-file notes.md
