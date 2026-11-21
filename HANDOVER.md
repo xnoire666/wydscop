@@ -146,7 +146,8 @@ Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **publi
   `SHA256SUMS.txt` and a GitHub build attestation (`actions/attest-build-provenance`) for every exe built on a
   push (not on pull requests); the signing job does the same for the signed exe and attaches both files to
   the release. The README's "Check your download" shows `gh attestation verify` and `Get-FileHash`. v1.0.0
-  was built before this, so it has no attestation, only the SHA-256 in its notes.
+  was built before this, so it has no attestation; its `SHA256SUMS.txt` was added to the release by hand
+  (22 Nov 2026), matching the SHA-256 in its notes.
 - **Commit identity is the maintainer's only** (commit `482b9a5`): step 3 above, `AGENTS.md` and the README
   tell forks and contributors to commit with their own GitHub identity, and AI tools never to set the
   `xnoire666` identity themselves. Before this, a fork following these docs would have committed as
