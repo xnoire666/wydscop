@@ -81,7 +81,8 @@ dotnet run --project src/Wydscop
 - Only one copy runs at a time; a second launch quietly exits.
 - If Alt+Space does nothing, another app may own the shortcut (for example PowerToys Run). The log says
   `Hotkey Alt+Space registered: False` in that case.
-- There are no automated tests. Check changes in the running app, in both Light and Dark themes, and read
+- `dotnet test Wydscop.slnx` runs the unit tests (match scoring, file-search filters, recent/pinned/usage stores). For everything
+  else, check changes in the running app, in both Light and Dark themes, and read
   the log at `%LocalAppData%\Wydscop\wydscop.log` (it starts fresh on every launch).
 
 ## 5. Bring your data over (optional)
@@ -123,6 +124,9 @@ Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **publi
 - **Open several at once:** Ctrl+click or Ctrl+Space marks results (blue tint and a bar on the left), Enter
   opens all marked, Ctrl+Enter shows them in File Explorer, Esc clears the marks. Marks are kept while you
   type, so you can mark results from several searches.
+- **Automated tests:** xUnit project `tests/Wydscop.Tests` (61 tests) for `Matcher`, `SearchFilters` and the
+  recent/pinned/usage stores, run in CI after the build. The stores' `Load` takes an optional file path so tests
+  use a temporary folder.
 - **Logo and tray icon:** a "WS" monogram in glowing aurora colors on a dark tile (`assets/logo.svg`,
   `assets/logo.png`). `src/Wydscop/Assets/Wydscop.ico` is the exe and tray icon; all of them are drawn by
   `tools/make-icon.py` (needs Pillow), so change the design there and rerun it.

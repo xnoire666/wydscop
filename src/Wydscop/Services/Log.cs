@@ -20,8 +20,12 @@ internal static class Log
         catch { /* logging must never crash the app */ }
     }
 
+    /// <summary>Off in the unit tests, so they don't write into the running app's log.</summary>
+    internal static bool Enabled { get; set; } = true;
+
     public static void Write(string message)
     {
+        if (!Enabled) return;
         try
         {
             lock (Gate)

@@ -1,5 +1,8 @@
-﻿<Solution>
+<Solution>
   <Folder Name="/src/">
     <Project Path="src/Wydscop/Wydscop.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Wydscop.Tests/Wydscop.Tests.csproj" />
   </Folder>
 </Solution>

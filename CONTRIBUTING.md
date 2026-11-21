@@ -36,8 +36,9 @@ dotnet run --project src/Wydscop
 - **Colors only through theme keys.** Every color in `SearchWindow.xaml` comes from `Themes.cs`; add a new key
   to **both** the Light and Dark palettes. Never hard-code a color in XAML.
 - **Check both themes** for any visual change.
-- **There are no automated tests.** Build, run the app, try your change, and say in the pull request what you
-  tried.
+- **Run the tests** with `dotnet test Wydscop.slnx`; they check match scoring, what file search skips, and the saved recent, pinned and usage lists. If you
+  change those, add or update a test. The rest of the app has no tests, so also build, run the app, try your
+  change, and say in the pull request what you tried.
 - Some behavior is a deliberate choice (Alt+Space, no sections or "top hit" in results, the ✕ on the left of
   recent rows and the pin on the right, one-click "Clear all", and others listed in AGENTS.md). Please don't
   change those without asking first.

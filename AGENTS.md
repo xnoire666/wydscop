@@ -26,8 +26,12 @@ dotnet run --project src/Wydscop
 - Release / CI build: `dotnet build Wydscop.slnx -c Release`. CI (`.github/workflows/build.yml`) also
   publishes a self-contained, compressed single-file `Wydscop.exe` as an artifact. A `v*` tag also has
   SignPath sign it and creates a GitHub Release (`CODE_SIGNING.md`); only CI builds are ever signed.
-- There are **no automated tests**. Verify changes by building, running the app, and reading the log at
-  `%LocalAppData%\Wydscop\wydscop.log` (reset on every launch). For UI changes, check both themes.
+- **Tests:** `dotnet test Wydscop.slnx` (xUnit, `tests/Wydscop.Tests`; CI runs them too). They cover the parts
+  that need no window: match scoring (`Matcher`), what file search skips (`SearchFilters`), and the
+  recent/pinned/usage stores. If you change those, update or add tests. Store tests pass a temporary file to
+  `Load(path)` and turn `Log.Enabled` off, so they never touch the real `%LocalAppData%\Wydscop`; keep it
+  that way. Everything else (the bar, the shell, Windows Search) has no tests: verify by building, running the app, and reading the log at `%LocalAppData%\Wydscop\wydscop.log` (reset on every
+  launch). For UI changes, check both themes.
 
 ## Architecture
 
@@ -57,6 +61,7 @@ dotnet run --project src/Wydscop
 | Logo and app/tray icon (generated; edit the script, not the images) | `tools/make-icon.py` → `src/Wydscop/Assets/Wydscop.ico`, `assets/logo.*` |
 | MSIX: manifest, Store images, build script, submission guide | `packaging/` (`Package.appxmanifest`, `build-msix.ps1`, `README.md`) |
 | Win32 / DWM imports | `src/Wydscop/Interop/NativeMethods.cs` |
+| Unit tests (xUnit; internals visible via `InternalsVisibleTo` in the app's csproj) | `tests/Wydscop.Tests/` |
 
 **Result ordering** (`SortByScore` in `SearchWindow.Search.cs`): by `Matcher` score (exact 1000, starts with 900,
 word start 800, initials 700, contains 500, letters in order ≤300, typos ≤150; name length does **not** count),

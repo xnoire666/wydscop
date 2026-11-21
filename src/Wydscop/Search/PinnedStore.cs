@@ -13,15 +13,16 @@ internal sealed record PinnedItem(string Id, ResultKind Kind, string Title, Date
 /// </summary>
 internal sealed class PinnedStore
 {
-    private static readonly string FilePath = Path.Combine(
+    private static readonly string DefaultPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Wydscop", "pinned.json");
 
     private readonly List<PinnedItem> _items;
     private readonly HashSet<string> _ids;
 
-    private PinnedStore(List<PinnedItem> items)
+    private PinnedStore(List<PinnedItem> items, string path)
     {
         _items = items;
+        _path = path;
         _ids = new HashSet<string>(items.Select(i => i.Id), StringComparer.OrdinalIgnoreCase);
     }
 
@@ -29,21 +30,26 @@ internal sealed class PinnedStore
 
     public bool Contains(string id) => _ids.Contains(id);
 
-    public static PinnedStore Load()
+    /// <summary>The file this store reads and saves.</summary>
+    private readonly string _path;
+
+    /// <param name="path">Where to keep the file; tests pass a temporary one. Defaults to pinned.json in %LocalAppData%\Wydscop.</param>
+    public static PinnedStore Load(string? path = null)
     {
+        path ??= DefaultPath;
         try
         {
-            if (File.Exists(FilePath))
+            if (File.Exists(path))
             {
-                var items = JsonSerializer.Deserialize<List<PinnedItem>>(File.ReadAllText(FilePath));
-                if (items is not null) return new PinnedStore(items);
+                var items = JsonSerializer.Deserialize<List<PinnedItem>>(File.ReadAllText(path));
+                if (items is not null) return new PinnedStore(items, path);
             }
         }
         catch (Exception ex)
         {
             Log.Write("Could not read pinned.json: " + ex.Message);
         }
-        return new PinnedStore(new List<PinnedItem>());
+        return new PinnedStore(new List<PinnedItem>(), path);
     }
 
     /// <summary>Pins it (added at the end) or unpins it. Returns true when it's now pinned.</summary>
@@ -69,8 +75,8 @@ internal sealed class PinnedStore
     {
         try
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
-            File.WriteAllText(FilePath, JsonSerializer.Serialize(_items));
+            Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
+            File.WriteAllText(_path, JsonSerializer.Serialize(_items));
         }
         catch (Exception ex)
         {

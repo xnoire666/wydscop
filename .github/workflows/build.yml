@@ -1,4 +1,4 @@
-# Builds Wydscop on every push and pull request, and attaches a ready-to-run Wydscop.exe
+# Builds and tests Wydscop on every push and pull request, and attaches a ready-to-run Wydscop.exe
 # (self-contained, single file, no .NET install needed) to the run as a downloadable artifact.
 #
 # Every exe built for a push to this repo also gets a SHA256SUMS.txt and a GitHub build attestation:
@@ -44,6 +44,9 @@ jobs:
 
       - name: Build
         run: dotnet build Wydscop.slnx -c Release
+
+      - name: Test
+        run: dotnet test Wydscop.slnx -c Release --no-build
 
       - name: Publish (self-contained single exe)
         run: >

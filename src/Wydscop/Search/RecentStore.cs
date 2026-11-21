@@ -15,30 +15,39 @@ internal sealed class RecentStore
 {
     public const int MaxItems = 50;
 
-    private static readonly string FilePath = Path.Combine(
+    private static readonly string DefaultPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Wydscop", "recent.json");
 
     private List<RecentItem> _items;
 
-    private RecentStore(List<RecentItem> items) => _items = items;
+    private RecentStore(List<RecentItem> items, string path)
+    {
+        _items = items;
+        _path = path;
+    }
 
     public IReadOnlyList<RecentItem> Items => _items;
 
-    public static RecentStore Load()
+    /// <summary>The file this store reads and saves.</summary>
+    private readonly string _path;
+
+    /// <param name="path">Where to keep the file; tests pass a temporary one. Defaults to recent.json in %LocalAppData%\Wydscop.</param>
+    public static RecentStore Load(string? path = null)
     {
+        path ??= DefaultPath;
         try
         {
-            if (File.Exists(FilePath))
+            if (File.Exists(path))
             {
-                var items = JsonSerializer.Deserialize<List<RecentItem>>(File.ReadAllText(FilePath));
-                if (items is not null) return new RecentStore(items);
+                var items = JsonSerializer.Deserialize<List<RecentItem>>(File.ReadAllText(path));
+                if (items is not null) return new RecentStore(items, path);
             }
         }
         catch (Exception ex)
         {
             Log.Write("Could not read recent.json: " + ex.Message);
         }
-        return new RecentStore(new List<RecentItem>());
+        return new RecentStore(new List<RecentItem>(), path);
     }
 
     /// <summary>Moves (or adds) this item to the top.</summary>
@@ -65,8 +74,8 @@ internal sealed class RecentStore
     {
         try
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
-            File.WriteAllText(FilePath, JsonSerializer.Serialize(_items));
+            Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
+            File.WriteAllText(_path, JsonSerializer.Serialize(_items));
         }
         catch (Exception ex)
         {

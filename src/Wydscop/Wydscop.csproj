@@ -34,6 +34,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- The search classes are internal; the tests may use them. -->
+    <InternalsVisibleTo Include="Wydscop.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Data.OleDb" Version="11.0.0" />
   </ItemGroup>
 

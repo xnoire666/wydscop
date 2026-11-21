@@ -10,29 +10,38 @@ namespace Wydscop.Search;
 /// </summary>
 internal sealed class UsageStore
 {
-    private static readonly string FilePath = Path.Combine(
+    private static readonly string DefaultPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Wydscop", "usage.json");
 
     private readonly Dictionary<string, int> _counts;
 
-    private UsageStore(Dictionary<string, int> counts) => _counts = counts;
-
-    public static UsageStore Load()
+    private UsageStore(Dictionary<string, int> counts, string path)
     {
+        _counts = counts;
+        _path = path;
+    }
+
+    /// <summary>The file this store reads and saves.</summary>
+    private readonly string _path;
+
+    /// <param name="path">Where to keep the file; tests pass a temporary one. Defaults to usage.json in %LocalAppData%\Wydscop.</param>
+    public static UsageStore Load(string? path = null)
+    {
+        path ??= DefaultPath;
         try
         {
-            if (File.Exists(FilePath))
+            if (File.Exists(path))
             {
-                var counts = JsonSerializer.Deserialize<Dictionary<string, int>>(File.ReadAllText(FilePath));
+                var counts = JsonSerializer.Deserialize<Dictionary<string, int>>(File.ReadAllText(path));
                 if (counts is not null)
-                    return new UsageStore(new Dictionary<string, int>(counts, StringComparer.OrdinalIgnoreCase));
+                    return new UsageStore(new Dictionary<string, int>(counts, StringComparer.OrdinalIgnoreCase), path);
             }
         }
         catch (Exception ex)
         {
             Log.Write("Could not read usage.json: " + ex.Message);
         }
-        return new UsageStore(new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase));
+        return new UsageStore(new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase), path);
     }
 
     /// <summary>Extra score: grows quickly for the first few launches, then levels off (max 200).</summary>
@@ -44,8 +53,8 @@ internal sealed class UsageStore
         _counts[id] = _counts.TryGetValue(id, out int count) ? count + 1 : 1;
         try
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
-            File.WriteAllText(FilePath, JsonSerializer.Serialize(_counts));
+            Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
+            File.WriteAllText(_path, JsonSerializer.Serialize(_counts));
         }
         catch (Exception ex)
         {
