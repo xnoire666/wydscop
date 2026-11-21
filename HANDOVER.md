@@ -129,8 +129,15 @@ Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **publi
   unpacked package with `-Register`: the bar, hotkey and startup task worked.
 - **Live in the Microsoft Store** as "wydscop", product ID `9P47NSX5N7RJ`
   (https://apps.microsoft.com/detail/9P47NSX5N7RJ; MSIX, submission 1, last modified 18 Nov 2026). The README
-  has the "Get it from Microsoft" badge. Further
-  changes go through **Start update** on the product page in Partner Center.
+  has the "Get it from Microsoft" badge and a Store link in its download line, and the repo's About box links
+  to the Store page. Further changes go through **Start update** on the product page in Partner Center.
+- **No "Spotlight" in Store-facing text:** Store policies discourage other companies' trademarks, so the MSIX
+  manifest's two descriptions and `packaging/store-listing.md` don't use the word. The README and the GitHub
+  description still say "Spotlight-style" (the user's choice; fine on GitHub).
+- **Code signing status is stated plainly:** README and `CODE_SIGNING.md` say SignPath signing is being set
+  up, GitHub releases are unsigned until then, and the Store version is signed by Microsoft. Switch both back
+  to the plain SignPath credit once the first signed release is out.
+- **No roadmap:** the user has none planned, so the README and this file don't list one.
 - **Ready for SignPath (free code signing):** MIT `LICENSE`, `CODE_SIGNING.md` (roles, privacy, credit
   line), and a `sign-and-release` job in `build.yml` that runs only for `v*` tags once the repo has the
   `SIGNPATH_ORGANIZATION_ID` variable and `SIGNPATH_API_TOKEN` secret. Git history was checked for personal
@@ -151,7 +158,9 @@ Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **publi
 - **Store listing refresh not done yet:** new listing text in `packaging/store-listing.md` and 1920×1080
   screenshots in `assets/store/` (bar captures with generic `C:\xampp` paths on a drawn background) are ready
   to apply with **Start update** in Partner Center. A listing-only update needs no new package; any new
-  package needs a higher `<Version>` than the live one.
+  package needs a higher `<Version>` than the live one. The live package (built 17–18 Nov) still has the old
+  manifest descriptions with "Spotlight-style"; the reworded ones (commit `99d36cb`) go out with the next
+  package.
 
 - The last two features built cleanly and the app ran, but they were only lightly tried. Check "Clear all"
   and marked rows in **both** themes, and try Ctrl+click on recent and pinned rows.
