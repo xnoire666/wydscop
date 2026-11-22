@@ -12,6 +12,8 @@ Nothing in the app itself has changed yet. Around it:
 - GitHub releases stay unsigned for now: SignPath Foundation, which gives free code signing to
   open-source projects, only accepts widely known ones and turned Wydscop down for the time being. The
   Microsoft Store version is signed by Microsoft.
+- Releases made from a version tag are published automatically and scanned on VirusTotal, with the
+  result added to the release notes.
 - Automated tests for match scoring, what file search skips, and the saved recent, pinned and usage
   lists.
 - Contributing guide, bug report form, security policy and code of conduct.

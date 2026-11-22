@@ -25,9 +25,10 @@ dotnet run --project src/Wydscop
   for each Store upload.
 - Release / CI build: `dotnet build Wydscop.slnx -c Release`. CI (`.github/workflows/build.yml`) also
   publishes a self-contained, compressed single-file `Wydscop.exe` as an artifact, with a `SHA256SUMS.txt`
-  and a build attestation. Releases are unsigned and made by hand with `gh release create`: SignPath
-  Foundation declined the project for now, so the `sign-and-release` job (which would sign on a `v*` tag
-  and create the release) stays off (`CODE_SIGNING.md`). Only CI builds are ever released or signed.
+  and a build attestation. A `v*` tag also creates a GitHub Release and has VirusTotal scan it. Releases
+  are unsigned for now (SignPath Foundation declined the project, `CODE_SIGNING.md`), so the
+  `release-unsigned` job publishes the exe as built; `sign-and-release` takes over only if the repo gets the
+  SignPath settings. Only CI builds are ever released or signed.
 - **Tests:** `dotnet test Wydscop.slnx` (xUnit, `tests/Wydscop.Tests`; CI runs them too). They cover the parts
   that need no window: match scoring (`Matcher`), what file search skips (`SearchFilters`), and the
   recent/pinned/usage stores. If you change those, update or add tests. Store tests pass a temporary file to

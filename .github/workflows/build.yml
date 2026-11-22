@@ -6,8 +6,9 @@
 #   gh attestation verify Wydscop.exe --repo xnoire666/wydscop
 # Pull requests skip the attestation (a fork's PR can't get the signing token it needs).
 #
-# Pushing a version tag (e.g. v1.2.0) also has SignPath sign that exe and publishes it as a GitHub
-# Release. The signing job stays off until the repo has the SignPath settings (see CODE_SIGNING.md):
+# Pushing a version tag (e.g. v1.2.0) also publishes that exe as a GitHub Release. Without SignPath
+# (the Foundation declined the project for now; see CODE_SIGNING.md) the release-unsigned job publishes
+# it as built. Once the repo has the SignPath settings, sign-and-release has it signed first instead:
 #   - variable SIGNPATH_ORGANIZATION_ID (Settings → Secrets and variables → Actions → Variables)
 #   - secret   SIGNPATH_API_TOKEN
 # After the release is made, the virustotal job scans its exe and adds the result to the release notes.
@@ -67,7 +68,8 @@ jobs:
         with:
           subject-path: publish/Wydscop.exe
 
-      # Kept to the exe alone: this is the artifact SignPath signs on version tags.
+      # Kept to the exe alone: this is the artifact SignPath signs (or release-unsigned publishes) on
+      # version tags.
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         id: upload
         with:
@@ -119,11 +121,51 @@ jobs:
           gh release create "${{ github.ref_name }}" signed/Wydscop.exe signed/SHA256SUMS.txt
           --repo "${{ github.repository }}" --title "Wydscop ${{ github.ref_name }}" --generate-notes
 
-  # Scans the released exe on VirusTotal and appends the result ("0 of 69 security vendors flagged this
-  # file", linked to the report) to the release notes. A flagged result is written down as it is, never
-  # hidden, and also shows as a warning on the run so it can be checked and reported as a false alarm.
+  # Only for version tags while there's no SignPath: publishes the exe from the build job as it is
+  # (unsigned) with its SHA256SUMS.txt. The build job already attested this exact file.
+  release-unsigned:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v') && vars.SIGNPATH_ORGANIZATION_ID == ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # to create the GitHub Release
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: ${{ github.ref_name }}
+      REPO: ${{ github.repository }}
+
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: Wydscop-win-x64*
+          merge-multiple: true
+          path: dist
+
+      - name: Check the exe matches its checksum
+        run: cd dist && sha256sum -c SHA256SUMS.txt
+
+      - name: Create the GitHub Release
+        run: |
+          sha=$(cut -d' ' -f1 dist/SHA256SUMS.txt)
+          notes=$(printf '%s\n' \
+            "This exe isn't code-signed, so Windows SmartScreen may warn about it: choose **More info** → **Run anyway**." \
+            "To check it's the genuine file, run \`gh attestation verify Wydscop.exe --repo $REPO\` or compare its SHA-256:" \
+            "" \
+            "\`$sha\`" \
+            "" \
+            "The [Microsoft Store](https://apps.microsoft.com/detail/9P47NSX5N7RJ) version is signed by Microsoft.")
+          gh release create "$TAG" dist/Wydscop.exe dist/SHA256SUMS.txt \
+            --repo "$REPO" --title "Wydscop $TAG" --notes "$notes" --generate-notes
+
+  # Scans the released exe (signed or not) on VirusTotal and appends the result ("0 of 69 security
+  # vendors flagged this file", linked to the report) to the release notes. A flagged result is written
+  # down as it is, never hidden, and also shows as a warning on the run so it can be checked and reported
+  # as a false alarm. Only one of the two release jobs runs; the other is skipped, hence the check below.
   virustotal:
-    needs: sign-and-release
+    needs: [sign-and-release, release-unsigned]
+    if: >
+      !cancelled() &&
+      (needs.sign-and-release.result == 'success' || needs.release-unsigned.result == 'success')
     runs-on: ubuntu-latest
     permissions:
       contents: write   # to download the release's exe and edit its notes

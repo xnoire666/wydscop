@@ -189,14 +189,17 @@ Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **publi
 
 ### Worth checking
 
-- **Releases are made by hand while there's no signing:** the `sign-and-release` job is what creates the
-  GitHub Release on a `v*` tag, and it stays off without SignPath. So a tag push only builds the exe, its
-  `SHA256SUMS.txt` and attestation as a workflow artifact; create the release with `gh release create`
-  from that artifact, as for v1.0.0, and give the SHA-256 in the notes.
+- **Unsigned releases are automatic but haven't run yet:** while the repo has no
+  `SIGNPATH_ORGANIZATION_ID` variable, a `v*` tag runs the `release-unsigned` job in `build.yml` instead of
+  `sign-and-release`. It checks the built exe against its `SHA256SUMS.txt`, creates the release with both
+  files, and writes notes saying the exe isn't signed (SmartScreen "Run anyway"), how to verify it
+  (`gh attestation verify`, SHA-256) and that the Store version is signed, followed by GitHub's generated
+  notes. The next release needs a **new** tag (e.g. `v1.0.1`, with `<Version>` in the csproj bumped to
+  match), since `v1.0.0` already has a release. Check the release and its notes after the first run.
 
-- **VirusTotal job doesn't run either:** it `needs: sign-and-release`, so it is skipped with it. For a
-  hand-made release, scan the exe on virustotal.com and add the result line to the notes by hand, as for
-  v1.0.0.
+- **VirusTotal job not run yet:** it now runs after whichever release job ran (signed or unsigned). The user
+  is to create a free virustotal.com account and add its API key as the repo secret `VIRUSTOTAL_API_KEY`;
+  without it the job skips itself. Check its log and the release notes after the next tagged release.
 
 - **If reapplying to SignPath later** (once the project has more stars, users and outside mentions): apply
   at signpath.org (give the Releases page as the download page), then in SignPath create project `wydscop`,
