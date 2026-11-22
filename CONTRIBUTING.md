@@ -2,6 +2,7 @@
 
 Thanks for helping! Bug reports and small, focused pull requests are welcome. There's no roadmap, so for
 anything bigger than a fix, open an issue first and ask whether it fits before you spend time on it.
+Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Reporting a bug
 

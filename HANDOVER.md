@@ -161,6 +161,16 @@ Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **publi
   version, Windows version, theme, optional log with personal paths removed), `config.yml` (no blank issues;
   links to usage and the security policy), and `SECURITY.md` (report privately via the Security tab). No
   feature request form, since there's no roadmap. Linked from the README's "Contributing and bugs".
+  Private vulnerability reporting is turned on in the repo, so the Security tab has "Report a vulnerability".
+- **Open-source trust signals:** `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1, short form; reports go
+  through GitHub's Report content or a message to xnoire666, no email), a pull request template
+  (`.github/pull_request_template.md`), `CHANGELOG.md` (1.0.0 plus Unreleased; add to it with each
+  release), and README badges (build, latest release, OpenSSF Scorecard, license). Every action in the
+  workflows is pinned to a commit SHA with the version in a comment. `.github/dependabot.yml` sends weekly
+  grouped updates for NuGet and Actions; Dependabot alerts and security fixes are on in the repo settings.
+  CodeQL code scanning uses GitHub's default setup (turned on in repo settings, not a workflow file).
+  `.github/workflows/scorecard.yml` runs the OpenSSF Scorecard on each push to main and weekly, publishes the
+  score (the badge reads it) and puts the details in Security → Code scanning.
 - **Commit identity is the maintainer's only** (commit `482b9a5`): step 3 above, `AGENTS.md` and the README
   tell forks and contributors to commit with their own GitHub identity, and AI tools never to set the
   `xnoire666` identity themselves. Before this, a fork following these docs would have committed as
@@ -192,6 +202,11 @@ Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **publi
   package needs a higher `<Version>` than the live one. The live package (built 17–18 Nov) still has the old
   manifest descriptions with "Spotlight-style"; the reworded ones (commit `99d36cb`) go out with the next
   package.
+
+- **Scorecard and CodeQL results:** after the first Scorecard run, look at its findings in Security → Code
+  scanning; some checks (code review, maintained, fuzzing) are hard for a one-person project to pass and
+  can be left. Merge Dependabot's pull requests when CI passes; it will offer newer major versions of the
+  pinned actions (e.g. checkout v4 → v7), so check each one's release notes first.
 
 - The last two features built cleanly and the app ran, but they were only lightly tried. Check "Clear all"
   and marked rows in **both** themes, and try Ctrl+click on recent and pinned rows.

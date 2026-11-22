@@ -1,0 +1,20 @@
+# Dependabot opens a pull request when a NuGet package or a GitHub Action used here has a new version,
+# and right away when one has a security fix. Updates come once a week, grouped into one pull request
+# per kind, so they don't pile up.
+version: 2
+updates:
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      nuget:
+        patterns: ['*']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']

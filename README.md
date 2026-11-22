@@ -6,6 +6,13 @@
 
 <p align="center"><i>Pronounced "wide scope"</i></p>
 
+<p align="center">
+  <a href="https://github.com/xnoire666/wydscop/actions/workflows/build.yml"><img src="https://github.com/xnoire666/wydscop/actions/workflows/build.yml/badge.svg?branch=main" alt="Build" /></a>
+  <a href="https://github.com/xnoire666/wydscop/releases/latest"><img src="https://img.shields.io/github/v/release/xnoire666/wydscop" alt="Latest release" /></a>
+  <a href="https://scorecard.dev/viewer/?uri=github.com/xnoire666/wydscop"><img src="https://api.scorecard.dev/projects/github.com/xnoire666/wydscop/badge" alt="OpenSSF Scorecard" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/xnoire666/wydscop" alt="License: MIT" /></a>
+</p>
+
 A fast, Spotlight-style search bar for Windows. Press **Alt+Space** anywhere, type a few letters,
 and open any app, file or folder on your PC.
 
@@ -153,7 +160,8 @@ at the top of a drive (`Windows`, `Program Files`, `ProgramData`…).
 
 ## Contributing and bugs
 
-Found a bug? Open an issue with the **Bug report** form. Want to help? See [CONTRIBUTING.md](CONTRIBUTING.md).
+Found a bug? Open an issue with the **Bug report** form. Want to help? See [CONTRIBUTING.md](CONTRIBUTING.md)
+and the [Code of Conduct](CODE_OF_CONDUCT.md). What changed in each release is in [CHANGELOG.md](CHANGELOG.md).
 Security problems go privately through the repository's Security tab; see [SECURITY.md](SECURITY.md).
 
 ## License
