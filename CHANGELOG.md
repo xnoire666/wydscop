@@ -3,7 +3,7 @@
 What changed in each release of Wydscop. The newest is at the top. Versions follow
 [semantic versioning](https://semver.org/): a bigger first number means something works differently.
 
-## Unreleased
+## 1.0.1 (23 Nov 2026)
 
 - Folders you excluded from Windows Search in Indexing Options (a code folder inside your user folder, for
   example) are now found too: Wydscop's own index covers them.
