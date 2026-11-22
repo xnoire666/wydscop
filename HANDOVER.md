@@ -186,20 +186,16 @@ Last updated: 23 Nov 2026. Branch `main`, everything pushed. The repo is **publi
 - **First release, v1.0.0 (22 Nov 2026), unsigned:** on GitHub Releases with the CI-built `Wydscop.exe` from
   commit `d9e6475` (Actions run 44941565599). The notes explain the SmartScreen "Run anyway" step and give the
   exe's SHA-256. Made by hand with `gh release create`, since the signing job isn't set up yet.
+- **v1.0.1 (23 Nov 2026), the first automatic release:** the excluded-folders search fix. Made by bumping
+  `<Version>` in the csproj, dating the CHANGELOG section, and pushing tag `v1.0.1` (Actions run 45043441658).
+  `release-unsigned` published `Wydscop.exe` and `SHA256SUMS.txt` with the unsigned/verify notes plus GitHub's
+  generated notes, and `virustotal` added "0 of 67 security vendors flagged this file". The generated notes
+  only list merged pull requests, so changes committed straight to `main` don't appear in them; the
+  CHANGELOG is the full list. **To release:** bump `<Version>`, rename "Unreleased" in CHANGELOG.md to the
+  version and date, commit, then `git tag -a vX.Y.Z` and push the tag. The Store needs its own upload
+  (`packaging/README.md`).
 
 ### Worth checking
-
-- **Unsigned releases are automatic but haven't run yet:** while the repo has no
-  `SIGNPATH_ORGANIZATION_ID` variable, a `v*` tag runs the `release-unsigned` job in `build.yml` instead of
-  `sign-and-release`. It checks the built exe against its `SHA256SUMS.txt`, creates the release with both
-  files, and writes notes saying the exe isn't signed (SmartScreen "Run anyway"), how to verify it
-  (`gh attestation verify`, SHA-256) and that the Store version is signed, followed by GitHub's generated
-  notes. The next release needs a **new** tag (e.g. `v1.0.1`, with `<Version>` in the csproj bumped to
-  match), since `v1.0.0` already has a release. Check the release and its notes after the first run.
-
-- **VirusTotal job not run yet:** it now runs after whichever release job ran (signed or unsigned). The user
-  is to create a free virustotal.com account and add its API key as the repo secret `VIRUSTOTAL_API_KEY`;
-  without it the job skips itself. Check its log and the release notes after the next tagged release.
 
 - **If reapplying to SignPath later** (once the project has more stars, users and outside mentions): apply
   at signpath.org (give the Releases page as the download page), then in SignPath create project `wydscop`,
