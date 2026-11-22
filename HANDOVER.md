@@ -112,7 +112,7 @@ missing drive) are simply hidden, not errors. Don't commit these files: they hol
 
 ## Where the work stands
 
-Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **public**.
+Last updated: 23 Nov 2026. Branch `main`, everything pushed. The repo is **public**.
 
 ### Done
 
@@ -124,7 +124,7 @@ Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **publi
 - **Open several at once:** Ctrl+click or Ctrl+Space marks results (blue tint and a bar on the left), Enter
   opens all marked, Ctrl+Enter shows them in File Explorer, Esc clears the marks. Marks are kept while you
   type, so you can mark results from several searches.
-- **Automated tests:** xUnit project `tests/Wydscop.Tests` (61 tests) for `Matcher`, `SearchFilters` and the
+- **Automated tests:** xUnit project `tests/Wydscop.Tests` (78 tests) for `Matcher`, `SearchFilters`, `WindowsIndexScope` and the
   recent/pinned/usage stores, run in CI after the build. The stores' `Load` takes an optional file path so tests
   use a temporary folder.
 - **Logo and tray icon:** a "WS" monogram in glowing aurora colors on a dark tile (`assets/logo.svg`,
@@ -250,6 +250,11 @@ parts that matter later are summarized here.
 - **"Option B" file search:** the Windows Search index is fast but misses folders it doesn't index (the
   test case was `C:\xampp\htdocs\erp`). So Wydscop also keeps its own in-memory name index for the rest
   (`LocalIndex.cs`).
+- **Folders excluded from Windows Search are still found (23 Nov 2026):** the local index used to read only
+  Windows' include rules, so a folder excluded in Indexing Options inside `C:\Users\` (a code repo, say) was
+  covered by neither source. `WindowsIndexScope.cs` now reads include and exclude rules (the most specific
+  wins), and the scan walks through covered folders to reach the excluded ones. Rules with wildcards
+  (Windows' built-in junk lists such as `Users\*\AppData\`) are ignored, so those folders stay skipped.
 - **Typo tolerance** ("fuzzy search") is used only when nothing matches normally.
 - **Ordering** was set by the user:
   1. how close the name is to what you typed;

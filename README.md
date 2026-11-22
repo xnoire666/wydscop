@@ -52,7 +52,8 @@ Get-FileHash Wydscop.exe
 - **Apps, files and folders** in one list:
   - apps from the Start menu (desktop and Store apps);
   - files and folders on all fixed drives, from the **Windows Search index** (your user folders) plus
-    Wydscop's **own index** for everything Windows doesn't index (e.g. `C:\xampp`, other drives).
+    Wydscop's **own index** for everything Windows doesn't index (e.g. `C:\xampp`, other drives, folders
+    you excluded in Indexing Options).
 - **Smart ordering.** Best match first (exact name, starts with, word start, initials, contains,
   letters in order); results that match the same way are ordered **newest first** by date and time.
 - **Typo tolerant.** `chorme` → Chrome, `calculater` → Calculator (only when nothing matches normally).

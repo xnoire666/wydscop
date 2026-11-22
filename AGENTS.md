@@ -30,8 +30,8 @@ dotnet run --project src/Wydscop
   `release-unsigned` job publishes the exe as built; `sign-and-release` takes over only if the repo gets the
   SignPath settings. Only CI builds are ever released or signed.
 - **Tests:** `dotnet test Wydscop.slnx` (xUnit, `tests/Wydscop.Tests`; CI runs them too). They cover the parts
-  that need no window: match scoring (`Matcher`), what file search skips (`SearchFilters`), and the
-  recent/pinned/usage stores. If you change those, update or add tests. Store tests pass a temporary file to
+  that need no window: match scoring (`Matcher`), what file search skips (`SearchFilters`), which folders
+  Windows Search covers (`WindowsIndexScope`), and the recent/pinned/usage stores. If you change those, update or add tests. Store tests pass a temporary file to
   `Load(path)` and turn `Log.Enabled` off, so they never touch the real `%LocalAppData%\Wydscop`; keep it
   that way. Everything else (the bar, the shell, Windows Search) has no tests: verify by building, running the app, and reading the log at `%LocalAppData%\Wydscop\wydscop.log` (reset on every
   launch). For UI changes, check both themes.
@@ -56,6 +56,7 @@ dotnet run --project src/Wydscop
 | Start menu apps (`shell:AppsFolder`), icons, dates | `src/Wydscop/Search/AppIndex.cs` |
 | Windows Search index queries (OLE DB, `Search.CollatorDSO`) | `src/Wydscop/Search/FileSearch.cs` |
 | Own in-memory name index for folders Windows doesn't index | `src/Wydscop/Search/LocalIndex.cs` |
+| Which folders Windows Search covers (its include and exclude rules) | `src/Wydscop/Search/WindowsIndexScope.cs` |
 | Match scoring and typo tolerance | `src/Wydscop/Search/Matcher.cs` |
 | What file search skips | `src/Wydscop/Search/SearchFilters.cs` |
 | Saved recent items, pins, open counts (JSON) | `src/Wydscop/Search/RecentStore.cs`, `PinnedStore.cs`, `UsageStore.cs` |

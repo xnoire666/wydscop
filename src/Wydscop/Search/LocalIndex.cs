@@ -48,8 +48,8 @@ internal sealed partial class LocalIndex
 
     private string[] _roots = [];
 
-    /// <summary>Folders the Windows index already covers (each ends with '\'); skipped here.</summary>
-    private string[] _windowsIndexed = [];
+    /// <summary>What the Windows index already covers; skipped here, except the folders it excludes.</summary>
+    private WindowsIndexScope _windowsScope = WindowsIndexScope.None;
 
     public LocalIndex()
     {
@@ -64,9 +64,10 @@ internal sealed partial class LocalIndex
             .Where(d => d.DriveType == DriveType.Fixed && d.IsReady)
             .Select(d => d.RootDirectory.FullName)
             .ToArray();
-        _windowsIndexed = ReadWindowsIndexedFolders();
+        _windowsScope = ReadWindowsIndexScope();
 
-        Log.Write($"Local index roots: {string.Join(", ", _roots)}; skipping Windows-indexed: {string.Join(", ", _windowsIndexed)}");
+        Log.Write($"Local index roots: {string.Join(", ", _roots)}; skipping Windows-indexed: {string.Join(", ", _windowsScope.IncludedFolders)}" +
+                  $"; but indexing what Windows excludes there: {string.Join(", ", _windowsScope.Gaps)}");
 
         foreach (var root in _roots) StartWatcher(root);
         _rescanTimer.Change(FirstScanDelay, Timeout.InfiniteTimeSpan);
@@ -207,6 +208,9 @@ internal sealed partial class LocalIndex
             bool atDriveRoot = dirId >= 0 && dirPath.Length <= 3; // "C:\"
             string parentName = Path.GetFileName(dirPath.TrimEnd('\\'));
 
+            // A folder Windows indexes is only walked through to reach a part it excludes; its own items are left to Windows.
+            bool dirCovered = _windowsScope.Covers(dirPath);
+
             try
             {
                 var entries = new FileSystemEnumerable<(string Name, bool IsDir, long Ticks, FileAttributes Attributes)>(
@@ -221,11 +225,18 @@ internal sealed partial class LocalIndex
                     if (isDir)
                     {
                         string full = Path.Join(dirPath, name);
-                        if (ShouldSkipFolder(full, name, parentName, atDriveRoot)) continue;
-                        builder.AddItem(name, dirId, isDir: true, ticks);
-                        stack.Push(builder.AddDir(full));
+                        if (IsNoiseFolder(name, parentName, atDriveRoot)) continue;
+                        if (!_windowsScope.Covers(full))
+                        {
+                            builder.AddItem(name, dirId, isDir: true, ticks);
+                            stack.Push(builder.AddDir(full));
+                        }
+                        else if (_windowsScope.HasGapsInside(full))
+                        {
+                            stack.Push(builder.AddDir(full)); // walk through it without listing it
+                        }
                     }
-                    else if (!SearchFilters.IsExcludedFileName(name))
+                    else if (!dirCovered && !SearchFilters.IsExcludedFileName(name))
                     {
                         builder.AddItem(name, dirId, isDir: false, ticks);
                     }
@@ -238,21 +249,10 @@ internal sealed partial class LocalIndex
         }
     }
 
-    private bool ShouldSkipFolder(string fullPath, string name, string parentName, bool atDriveRoot)
-    {
-        if (SearchFilters.NoiseFolderNames.Contains(name)) return true;
-        if (atDriveRoot && SearchFilters.DriveRootFolderNames.Contains(name)) return true;
-        if (SearchFilters.IsBuildOutput(name, parentName)) return true;
-        return IsWindowsIndexed(fullPath);
-    }
-
-    private bool IsWindowsIndexed(string path)
-    {
-        string withSlash = path.EndsWith('\\') ? path : path + "\\";
-        foreach (var prefix in _windowsIndexed)
-            if (withSlash.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) return true;
-        return false;
-    }
+    private static bool IsNoiseFolder(string name, string parentName, bool atDriveRoot) =>
+        SearchFilters.NoiseFolderNames.Contains(name)
+        || (atDriveRoot && SearchFilters.DriveRootFolderNames.Contains(name))
+        || SearchFilters.IsBuildOutput(name, parentName);
 
     // ---------- Live updates ----------
 
@@ -289,7 +289,7 @@ internal sealed partial class LocalIndex
     }
 
     private bool IsOutOfScope(string path) =>
-        SearchFilters.IsNoisePath(path) || IsWindowsIndexed(Path.GetDirectoryName(path) ?? path);
+        SearchFilters.IsNoisePath(path) || _windowsScope.Covers(path);
 
     private void OnCreated(string path)
     {
@@ -337,37 +337,42 @@ internal sealed partial class LocalIndex
     // ---------- Which folders Windows already indexes ----------
 
     /// <summary>
-    /// Reads the Windows Search "include" rules (e.g. C:\Users\) so we don't index them twice.
+    /// Reads the Windows Search rules: "include" folders (e.g. C:\Users\) so we don't index them twice, and
+    /// "exclude" folders inside them (e.g. a code folder removed in Indexing Options) so we index those ourselves.
     /// If Windows Search isn't running, nothing is covered by it and we index everything ourselves.
     /// </summary>
-    private static string[] ReadWindowsIndexedFolders()
+    private static WindowsIndexScope ReadWindowsIndexScope()
     {
         try
         {
-            if (!FileSearch.IsAvailable()) return [];
+            if (!FileSearch.IsAvailable()) return WindowsIndexScope.None;
 
             using var rules = Registry.LocalMachine.OpenSubKey(
                 @"SOFTWARE\Microsoft\Windows Search\CrawlScopeManager\Windows\SystemIndex\WorkingSetRules");
-            if (rules is null) return [];
+            if (rules is null) return WindowsIndexScope.None;
 
-            var folders = new List<string>();
+            var list = new List<WindowsIndexScope.Rule>();
             foreach (var name in rules.GetSubKeyNames())
             {
                 using var rule = rules.OpenSubKey(name);
                 if (rule?.GetValue("URL") is not string url || !url.StartsWith("file:///", StringComparison.OrdinalIgnoreCase)) continue;
-                if (rule.GetValue("Include") is not int include || include != 1) continue;
+                if (rule.GetValue("Include") is not int include) continue;
 
                 // "file:///C:\[b4b9847c-...]\Users\" → "C:\Users\"
                 string path = VolumeGuid().Replace(url["file:///".Length..], "");
-                if (!path.EndsWith('\\')) path += "\\";
-                folders.Add(path);
+
+                // Rules with wildcards are Windows' built-in junk lists (Users\*\AppData\, Users\me\.*\, temp folders).
+                // Leaving them out keeps those folders counted as covered, so we skip them too.
+                if (path.Contains('*')) continue;
+
+                list.Add(new WindowsIndexScope.Rule(path, include == 1));
             }
-            return folders.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+            return new WindowsIndexScope(list);
         }
         catch (Exception ex)
         {
             Log.Write("Could not read Windows Search scopes: " + ex.Message);
-            return [];
+            return WindowsIndexScope.None;
         }
     }
 

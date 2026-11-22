@@ -5,7 +5,10 @@ What changed in each release of Wydscop. The newest is at the top. Versions foll
 
 ## Unreleased
 
-Nothing in the app itself has changed yet. Around it:
+- Folders you excluded from Windows Search in Indexing Options (a code folder inside your user folder, for
+  example) are now found too: Wydscop's own index covers them.
+
+Around the app:
 
 - Every exe built by CI comes with a `SHA256SUMS.txt` and a GitHub build attestation, so you can check
   it's the genuine file (see the README's "Check your download").
