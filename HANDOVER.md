@@ -142,11 +142,12 @@ Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **publi
 - **No "Spotlight" in Store-facing text:** Store policies discourage other companies' trademarks, so the MSIX
   manifest's two descriptions and `packaging/store-listing.md` don't use the word. The README and the GitHub
   description still say "Spotlight-style" (the user's choice; fine on GitHub).
-- **Code signing status is stated plainly:** README and `CODE_SIGNING.md` say SignPath signing is being set
-  up, GitHub releases are unsigned until then, and the Store version is signed by Microsoft. Switch both back
-  to the plain SignPath credit once the first signed release is out.
+- **Code signing status is stated plainly:** README, `CODE_SIGNING.md` and `CHANGELOG.md` say SignPath
+  Foundation turned the project down for now (it only accepts widely known projects), GitHub releases are
+  unsigned, the project can reapply later, and the Store version is signed by Microsoft. If it's ever
+  accepted, switch them to the plain SignPath credit once the first signed release is out.
 - **No roadmap:** the user has none planned, so the README and this file don't list one.
-- **Build attestations and checksums** (stand-in until SignPath signing): `build.yml` makes a
+- **Build attestations and checksums** (stand-in for code signing): `build.yml` makes a
   `SHA256SUMS.txt` and a GitHub build attestation (`actions/attest-build-provenance`) for every exe built on a
   push (not on pull requests); the signing job does the same for the signed exe and attaches both files to
   the release. The README's "Check your download" shows `gh attestation verify` and `Get-FileHash`. v1.0.0
@@ -175,26 +176,34 @@ Last updated: 22 Nov 2026. Branch `main`, everything pushed. The repo is **publi
   tell forks and contributors to commit with their own GitHub identity, and AI tools never to set the
   `xnoire666` identity themselves. Before this, a fork following these docs would have committed as
   xnoire666. The maintainer's own clone is unchanged.
-- **Ready for SignPath (free code signing):** MIT `LICENSE`, `CODE_SIGNING.md` (roles, privacy, credit
-  line), and a `sign-and-release` job in `build.yml` that runs only for `v*` tags once the repo has the
-  `SIGNPATH_ORGANIZATION_ID` variable and `SIGNPATH_API_TOKEN` secret. Git history was checked for personal
-  data before going public: clean.
+- **SignPath application declined (Nov 2026):** SignPath Foundation turned the project down for now
+  because it doesn't yet show enough public visibility (stars, forks, contributors, articles, discussions);
+  it invited a new application once the project is better known. Everything for it stays in place: MIT
+  `LICENSE`, `CODE_SIGNING.md` (roles, privacy, credit line) and a `sign-and-release` job in `build.yml` that
+  runs only for `v*` tags once the repo has the `SIGNPATH_ORGANIZATION_ID` variable and `SIGNPATH_API_TOKEN`
+  secret. Without them the job skips itself. Git history was checked for personal data before going
+  public: clean.
 - **First release, v1.0.0 (22 Nov 2026), unsigned:** on GitHub Releases with the CI-built `Wydscop.exe` from
   commit `d9e6475` (Actions run 44941565599). The notes explain the SmartScreen "Run anyway" step and give the
   exe's SHA-256. Made by hand with `gh release create`, since the signing job isn't set up yet.
 
 ### Worth checking
 
-- **SignPath not set up yet:** apply at signpath.org (give the Releases page as the download page), then in
-  SignPath create project `wydscop`, an artifact configuration (zip containing the PE file `Wydscop.exe`) and
-  the signing policy `release-signing`; install the SignPath GitHub App; add the variable and secret above.
-  The first signed release needs a **new** tag (e.g. `v1.0.1`, with `<Version>` in the csproj bumped to
-  match), because `v1.0.0` already has a release and `gh release create` in the job would fail on it.
-  Approve the request in SignPath. The job has not run yet.
+- **Releases are made by hand while there's no signing:** the `sign-and-release` job is what creates the
+  GitHub Release on a `v*` tag, and it stays off without SignPath. So a tag push only builds the exe, its
+  `SHA256SUMS.txt` and attestation as a workflow artifact; create the release with `gh release create`
+  from that artifact, as for v1.0.0, and give the SHA-256 in the notes.
 
-- **VirusTotal job not run yet:** the user is to create a free virustotal.com account and add its API key as
-  the repo secret `VIRUSTOTAL_API_KEY`. The job only runs after a signed release, so the first real run comes
-  with the first SignPath release; check its log and the release notes then.
+- **VirusTotal job doesn't run either:** it `needs: sign-and-release`, so it is skipped with it. For a
+  hand-made release, scan the exe on virustotal.com and add the result line to the notes by hand, as for
+  v1.0.0.
+
+- **If reapplying to SignPath later** (once the project has more stars, users and outside mentions): apply
+  at signpath.org (give the Releases page as the download page), then in SignPath create project `wydscop`,
+  an artifact configuration (zip containing the PE file `Wydscop.exe`) and the signing policy
+  `release-signing`; install the SignPath GitHub App; add the variable and secret above. The first signed
+  release needs a **new** tag that has no release yet, because `gh release create` in the job would fail on
+  an existing one. Approve the request in SignPath.
 
 - **Store listing refresh not done yet:** new listing text in `packaging/store-listing.md` and 1920×1080
   screenshots in `assets/store/` (bar captures with generic `C:\xampp` paths on a drawn background) are ready

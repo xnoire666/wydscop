@@ -9,8 +9,9 @@ Nothing in the app itself has changed yet. Around it:
 
 - Every exe built by CI comes with a `SHA256SUMS.txt` and a GitHub build attestation, so you can check
   it's the genuine file (see the README's "Check your download").
-- Releases made from a version tag will be signed through SignPath Foundation and scanned on VirusTotal,
-  with the result added to the release notes.
+- GitHub releases stay unsigned for now: SignPath Foundation, which gives free code signing to
+  open-source projects, only accepts widely known ones and turned Wydscop down for the time being. The
+  Microsoft Store version is signed by Microsoft.
 - Automated tests for match scoring, what file search skips, and the saved recent, pinned and usage
   lists.
 - Contributing guide, bug report form, security policy and code of conduct.

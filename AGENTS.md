@@ -24,8 +24,10 @@ dotnet run --project src/Wydscop
   `-Register` to install it for your user and try it (needs Developer Mode). Bump `<Version>` in the csproj
   for each Store upload.
 - Release / CI build: `dotnet build Wydscop.slnx -c Release`. CI (`.github/workflows/build.yml`) also
-  publishes a self-contained, compressed single-file `Wydscop.exe` as an artifact. A `v*` tag also has
-  SignPath sign it and creates a GitHub Release (`CODE_SIGNING.md`); only CI builds are ever signed.
+  publishes a self-contained, compressed single-file `Wydscop.exe` as an artifact, with a `SHA256SUMS.txt`
+  and a build attestation. Releases are unsigned and made by hand with `gh release create`: SignPath
+  Foundation declined the project for now, so the `sign-and-release` job (which would sign on a `v*` tag
+  and create the release) stays off (`CODE_SIGNING.md`). Only CI builds are ever released or signed.
 - **Tests:** `dotnet test Wydscop.slnx` (xUnit, `tests/Wydscop.Tests`; CI runs them too). They cover the parts
   that need no window: match scoring (`Matcher`), what file search skips (`SearchFilters`), and the
   recent/pinned/usage stores. If you change those, update or add tests. Store tests pass a temporary file to

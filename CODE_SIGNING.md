@@ -1,17 +1,21 @@
 # Code signing policy
 
-> **Status:** being set up with SignPath Foundation; not active yet, so current releases on GitHub are
-> unsigned. The Microsoft Store version is signed by Microsoft.
+> **Status:** not signed. [SignPath Foundation](https://signpath.org/), which gives free code signing to
+> open-source projects, turned down Wydscop's application in November 2026: it only accepts projects that
+> are already widely known. The project can reapply once it's better known. Until then, the `Wydscop.exe`
+> on GitHub Releases is unsigned; check a download with its build attestation or `SHA256SUMS.txt` (see the
+> README's "Check your download"). The Microsoft Store version is signed by Microsoft.
+>
+> The rest of this page is the policy that will apply if the project is accepted later.
 
-Free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by
-[SignPath Foundation](https://signpath.org/).
-
-## What gets signed
+## What would get signed
 
 Only `Wydscop.exe` built from this repository's source by the GitHub Actions workflow
 (`.github/workflows/build.yml`), for tagged releases (`v*`). Nothing built on a personal PC is ever
-signed. Signed releases are published on this repository's
-[Releases](https://github.com/xnoire666/wydscop/releases) page.
+signed. Signed releases would be published on this repository's
+[Releases](https://github.com/xnoire666/wydscop/releases) page, with the credit line "Free code signing
+provided by [SignPath.io](https://about.signpath.io/), certificate by
+[SignPath Foundation](https://signpath.org/)."
 
 The Microsoft Store version is signed by Microsoft, not through SignPath.
 

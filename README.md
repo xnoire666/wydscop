@@ -30,7 +30,7 @@ Built with C# and WPF on .NET 10. Everything runs locally: no accounts, no netwo
 Microsoft, updates automatically), or get `Wydscop.exe` from [Releases](https://github.com/xnoire666/wydscop/releases).
 The exe is a single file for Windows 10/11 (x64); no install or .NET needed.
 
-**Check your download.** The exe isn't code-signed yet, so Windows may warn about it. To check it's the
+**Check your download.** The exe isn't code-signed, so Windows may warn about it. To check it's the
 genuine file, built by this repository's GitHub Actions from its public source, verify its build
 attestation with the [GitHub CLI](https://cli.github.com/):
 
@@ -170,7 +170,9 @@ Security problems go privately through the repository's Security tab; see [SECUR
 
 ## Code signing
 
-Free code signing through [SignPath Foundation](https://signpath.org/) is being set up. Until it's
-active, the `Wydscop.exe` on Releases is unsigned. The
-[Microsoft Store](https://apps.microsoft.com/detail/9P47NSX5N7RJ) version is signed by Microsoft. See
-[CODE_SIGNING.md](CODE_SIGNING.md).
+The `Wydscop.exe` on Releases is not code-signed: [SignPath Foundation](https://signpath.org/), which
+gives free signing to open-source projects, only accepts projects that are already widely known, so it
+turned this one down for now. The project can reapply once it's better known. To check a download is genuine, verify its
+build attestation or checksum, as described under "Check your download" at the top. The
+[Microsoft Store](https://apps.microsoft.com/detail/9P47NSX5N7RJ) version is signed by Microsoft, so
+it's the easiest choice if you'd rather have a signed app. See [CODE_SIGNING.md](CODE_SIGNING.md).
